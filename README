@@ -1,0 +1,14 @@
+KindleQuotes
+	
+	Take the clippings file from kindle and parse out into database.
+
+
+Usage
+
+	./kindlequotes.py "My Clippings.txt"
+
+
+See DATABASE_SETUP for mysql table setup
+
+
+Be sure to fill in your database variables in the kindlequotes.py file.
