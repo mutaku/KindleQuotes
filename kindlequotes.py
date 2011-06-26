@@ -11,7 +11,7 @@ import sys,os,re,hashlib,MySQLdb,pickle
 #	if this is set, we will not spit out html and instead dump to the database
 #		remember we don't everwrite anything (see hash_id code and explanation below)
 ############################################################
-DB_DUMP = 1	# 0 = spit out html, 1 = dump to the database
+DB_DUMP = 0	# 0 = spit out html, 1 = dump to the database
 ############################################################
 
 # FILL IN THESE VARIABLES TO MATCH YOUR DATABASE
@@ -33,13 +33,14 @@ if DB_DUMP not in range(0,2):
 	error(e)
 
 # establish the database connection for dumping
-global connection, cursor
-try:
-	connection = MySQLdb.connect(host = DB_HOST, user = DB_USER, passwd = DB_PASSWD, db = DB_DATABASE)
-	cursor = connection.cursor()
-except MySQLdb.Error, e:
-	e = "Error %d: %s" % (e.args[0], e.args[1])
-	error(e)
+if DB_DUMP == 1:
+	global connection, cursor
+	try:
+		connection = MySQLdb.connect(host = DB_HOST, user = DB_USER, passwd = DB_PASSWD, db = DB_DATABASE)
+		cursor = connection.cursor()
+	except MySQLdb.Error, e:
+		e = "Error %d: %s" % (e.args[0], e.args[1])
+		error(e)
 
 # read in the file from the command-line --simple only looks for the first argument
 try:
