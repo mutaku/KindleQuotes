@@ -74,6 +74,7 @@ def input(db, data):
                     try:
                             sql = "INSERT INTO books VALUES(?,?,?)"
                             cursor.execute(sql,(book_hash_id,book_title,book_author))
+                            connection.commit()
                     except connection.Error, err:
                             e = "Error: %s" % err.args[0]
                             error.append(e)
@@ -104,6 +105,11 @@ def input(db, data):
                             sql = "INSERT INTO clips VALUES(null,?,?,?,?,?)"
                             try:
                                     cursor.execute(sql,(book_hash_id,location,entry_header,hash_id,quote))
+                                    connection.commit()
                             except connection.Error, err:
                                     e = "Error: %s" % err.args[0]
                                     error.append(e)
+
+    cursor.close()
+    connection.commit()
+    connection.close()
