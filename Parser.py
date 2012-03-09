@@ -2,6 +2,7 @@
 #	take the clippings file from kindle and parse out into database
 
 from pysqlite2 import dbapi2 as sqlite
+import Database
 
 class parse():
 	''' do the initial raw parse and split up everything by books by looking for the main entry dividers (=== etc)
@@ -62,9 +63,7 @@ class parse():
 
 
 	def doHTML(self):
-		'''directly dump an html version for testing
-			we only run if DB_DUMP is set to zero
-		'''
+		'''directly dump an html version for testing'''
 		
 		for k in self.clean_clips:
 			print "<div class=book>",k
@@ -77,75 +76,6 @@ class parse():
 
 
 	def dbDUMP(self):
-		''' dump into the database
-			we only run if DB_DUMP is set to one
-			table setup: id | book (book_hash_id to match book table id)* | location* | entry_header*^ | hash_id* | quote*^
-				* inserted by us	^ pickled object
-					pickle the dirty data
-			iterate over all the entries for each book and check the hash_id to make sure not previously inserted and if not dump it
-			also break up the book title into title and author and create a hash_id_book to dump as the id for that table
-			book table setup: book_hash_id* | title*^ | author*^
-				* inserted by us	^ pickled object
-		'''
+		''' dump into the database'''
 
-		connection = sqlite.connect(db)
-		cursor = connnection.cursor()
-
-		for k in self.clean_clips:
-			book_hash_id = hashlib.sha224(k).hexdigest()
-			if "(" in k:
-				book_string = k.rpartition("(")
-				book_title = book_string[0]
-				book_author = book_string[2].rstrip(")\r\n")
-			else:
-				book_title = k
-				book_author = "NULL"
-			
-			try:
-				sql = "SELECT * FROM books WHERE id=?"
-				cursor.execute(sql,(book_hash_id))
-				cursor.fetchone()
-				book_dupe = []
-				for d in cursor:
-					book_dupe.append(d)
-			except connection.Error, err:
-				e = "Error: %s" % err.args[0]
-				self.error.append(e)
-			
-			if len(book_dupe)<1:
-				try:
-					sql = "INSERT INTO books VALUES(?,?,?)"
-					cursor.execute(sql,(book_hash_id,book_title,book_author))
-				except connection.Error, err:
-					e = "Error: %s" % err.args[0]
-					self.error.append(e)
-
-			the_keys = sorted(self.clean_clips[k].iterkeys())
-			for e in the_keys:
-				entry_header = self.clean_clips[k][e][1]
-				location = int(self.clean_clips[k][e][0])
-				hash_id = e
-				if len(self.clean_clips[k][e])>2:
-					quote = self.clean_clips[k][e][2]
-				else:
-					quote = "NULL"
-				try:
-					sql = "SELECT id FROM clips WHERE hash_id like ?"
-					cursor.execute(sql,(hash_id))
-					cursor.fetchone()
-					entry_dupe = []
-					for d in cursor:
-						entry_dupe.append(d)
-				except connection.Error, err:
-					e = "Error: %s" % err.args[0]
-					self.error.append(e)
-
-				if len(entry_dupe)>0:
-					pass
-				else:
-					sql = "INSERT INTO clips VALUES(null,?,?,?,?,?)"
-					try:
-						cursor.execute(sql,(book_hash_id,location,entry_header,hash_id,quote))
-					except connection.Error, err:
-						e = "Error: %s" % err.args[0]
-						self.error.append(e)
+		Database.input(self.db, self.clean_clips)
