@@ -17,6 +17,8 @@ class parse():
 		'''
 		
 		self.db = db
+		self.error = []
+		
 		clips = {}
 		n = 0
 		for line in f:
@@ -85,57 +87,64 @@ class parse():
 				* inserted by us	^ pickled object
 		'''
 
+		connection = sqlite.connect(db)
+		cursor = connnection.cursor()
+
 		for k in self.clean_clips:
 			book_hash_id = hashlib.sha224(k).hexdigest()
 			if "(" in k:
 				book_string = k.rpartition("(")
-				book_title = pickle.dumps(book_string[0])
-				book_author = pickle.dumps(book_string[2].rstrip(")\r\n"))
+				book_title = book_string[0]
+				book_author = book_string[2].rstrip(")\r\n")
 			else:
-				book_title = pickle.dumps(k)
-				book_author = pickle.dumps("NULL")
+				book_title = k
+				book_author = "NULL"
+			
 			try:
-				sql = "SELECT * FROM books WHERE id like %s"
+				sql = "SELECT * FROM books WHERE id=?"
 				cursor.execute(sql,(book_hash_id))
 				cursor.fetchone()
 				book_dupe = []
 				for d in cursor:
 					book_dupe.append(d)
-			except MySQLdb.Error, e:
-				e = "Error %d: %s" % (e.args[0], e.args[1])
-				error(e)
+			except connection.Error, err:
+				e = "Error: %s" % err.args[0]
+				self.error.append(e)
+			
 			if len(book_dupe)<1:
 				try:
-					sql = "INSERT INTO books VALUES(%s,%s,%s)"
+					sql = "INSERT INTO books VALUES(?,?,?)"
 					cursor.execute(sql,(book_hash_id,book_title,book_author))
-				except MySQLdb.Error, e:
-					e = "Error %d: %s" % (e.args[0], e.args[1])
-					error(e)
+				except connection.Error, err:
+					e = "Error: %s" % err.args[0]
+					self.error.append(e)
+
 			the_keys = sorted(self.clean_clips[k].iterkeys())
 			for e in the_keys:
-				entry_header = pickle.dumps(self.clean_clips[k][e][1])
+				entry_header = self.clean_clips[k][e][1]
 				location = int(self.clean_clips[k][e][0])
 				hash_id = e
 				if len(self.clean_clips[k][e])>2:
-					quote = pickle.dumps(self.clean_clips[k][e][2])
+					quote = self.clean_clips[k][e][2]
 				else:
-					quote = pickle.dumps("NULL")
+					quote = "NULL"
 				try:
-					sql = "SELECT id FROM clips WHERE hash_id like %s"
+					sql = "SELECT id FROM clips WHERE hash_id like ?"
 					cursor.execute(sql,(hash_id))
 					cursor.fetchone()
 					entry_dupe = []
 					for d in cursor:
 						entry_dupe.append(d)
-				except MySQLdb.Error, e:
-					e = "Error %d: %s" % (e.args[0], e.args[1])
-					error(e)
+				except connection.Error, err:
+					e = "Error: %s" % err.args[0]
+					self.error.append(e)
+
 				if len(entry_dupe)>0:
 					pass
 				else:
-					sql = "INSERT INTO clips VALUES(null,%s,%s,%s,%s,%s)"
+					sql = "INSERT INTO clips VALUES(null,?,?,?,?,?)"
 					try:
 						cursor.execute(sql,(book_hash_id,location,entry_header,hash_id,quote))
-					except MySQLdb.Error, e:
-						e = "Error %d: %s" % (e.args[0], e.args[1])
-						error(e)
+					except connection.Error, err:
+						e = "Error: %s" % err.args[0]
+						self.error.append(e)
