@@ -65,6 +65,7 @@ class parse():
 		'''directly dump an html version for testing
 			we only run if DB_DUMP is set to zero
 		'''
+		
 		for k in self.clean_clips:
 			print "<div class=book>",k
 			the_keys = sorted(self.clean_clips[k].iterkeys())
