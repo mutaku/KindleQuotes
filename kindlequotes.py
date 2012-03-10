@@ -32,6 +32,11 @@ def setupProfile():
     }
     
     name = tkFileDialog.asksaveasfilename(**options)
+    if not name.endswith('.s3db'):
+        name = name+'.s3db'
+    
+    f = open(name, 'w')
+    f.close()
     
     Database.setupTables(name)
 
@@ -46,7 +51,7 @@ def testRun():
     
     p = Parser.parse(highlights, database)
     
-    return p.doHTML()
+    p.dbDUMP()
     
     
 if __name__ == '__main__':

@@ -5,3 +5,4 @@ My\ Clippings.txt
 local_settings.py
 
 *.s3db
+*.*-journal

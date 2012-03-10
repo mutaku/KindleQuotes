@@ -3,13 +3,15 @@
 
 from pysqlite2 import dbapi2 as sqlite
 import Database
+import re
+import hashlib
 
 class parse():
 	''' do the initial raw parse and split up everything by books by looking for the main entry dividers (=== etc)
 		we also use some email regex to snipe out any personal emails (amazon whisper conversions) and replace with a string
 	'''
 
-	def __init__(self, f, db, html=False):
+	def __init__(self, f, db):
 		'''parse over raw dictionary and split up entries by looking for the entry starters (_prefix)
 			we will split by book and then store by the hashed id
 			the hash_id is created from the header of each entry to make a unique entry id 
@@ -18,23 +20,24 @@ class parse():
 		'''
 		
 		self.db = db
+		self.f = open(f, 'r').readlines()
 		self.error = []
 		
-		clips = {}
+		self.clips = {}
 		n = 0
-		for line in f:
+		for line in self.f:
 			line = re.sub(r'[\w\-][\w\-\.]+@[\w\-][\w\-\.]+[a-zA-Z]{1,4}', "__email generated __", line)
 			if n == 0:
-				if line not in clips:
-					clips[line] = list()
-				this_title = line
+				if line not in self.clips:
+					self.clips[line] = list()
+				self.this_title = line
 				n = 1
 			else:
-				if line ==  '==========\r\n':
+				if line ==  '==========\n':
 					n = 0
 					pass
-				elif line != '\r\n':
-					clips[this_title].append(line)
+				elif line != '\n':
+					self.clips[self.this_title].append(line)
 		
 
 		self.clean_clips = {}
@@ -42,9 +45,9 @@ class parse():
 		h_prefix = "- Highlight"
 		n_prefix = "- Note"
 		b_prefix = "- Bookmark"
-		for k in clips:
+		for k in self.clips:
 			self.clean_clips[k] = dict()
-			for line in clips[k]:
+			for line in self.clips[k]:
 				if line.startswith(h_prefix) or line.startswith(n_prefix) or line.startswith(b_prefix):
 					n = 0
 				else:
@@ -78,4 +81,4 @@ class parse():
 	def dbDUMP(self):
 		''' dump into the database'''
 
-		Database.input(self.db, self.clean_clips)
+		Database.dump(self.db, self.clean_clips)
