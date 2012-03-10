@@ -55,7 +55,7 @@ def dump(db, data):
         if "(" in k:
             book_string = k.rpartition("(")
             book_title = book_string[0]
-            book_author = book_string[2].rstrip(")\r\n")
+            book_author = book_string[2].rstrip(")\n")
         else:
             book_title = k
             book_author = "NULL"
@@ -82,40 +82,40 @@ def dump(db, data):
                 error.append(e)
                 print error
 
-        #the_keys = sorted(data[k].iterkeys())
-        #for e in the_keys:
-        #    entry_header = data[k][e][1]
-        #    location = int(data[k][e][0])
-        #    hash_id = e
-        #    
-        #    if len(data[k][e])>2:
-        #        quote = data[k][e][2]
-        #    else:
-        #        quote = "NULL"
-        #    
-        #    entry_dupe = []
-        #    try:
-        #        sql = "SELECT id FROM clips WHERE hash_id LIKE ?"
-        #        cursor.execute(sql,(hash_id,))
-        #        cursor.fetchone()
-        #        for d in cursor:
-        #            entry_dupe.append(d)
-        #    except connection.Error, err:
-        #        e = "Error: %s" % err.args[0]
-        #        error.append(e)
-        #        print error
-        #
-        #    if len(entry_dupe)>0:
-        #        pass
-        #    else:
-        #        sql = "INSERT INTO clips VALUES(null,?,?,?,?,?)"
-        #        try:
-        #            cursor.execute(sql,(book_hash_id,location,entry_header,hash_id,quote,))
-        #            connection.commit()
-        #        except connection.Error, err:
-        #            e = "Error: %s" % err.args[0]
-        #            error.append(e)
-        #            print error
+        the_keys = sorted(data[k].iterkeys())
+        for e in the_keys:
+            entry_header = data[k][e][1]
+            location = int(data[k][e][0])
+            hash_id = e
+            
+            if len(data[k][e])>2:
+                quote = data[k][e][2]
+            else:
+                quote = "NULL"
+            
+            entry_dupe = []
+            try:
+                sql = "SELECT id FROM clips WHERE hash_id LIKE ?"
+                cursor.execute(sql,(hash_id,))
+                cursor.fetchone()
+                for d in cursor:
+                    entry_dupe.append(d)
+            except connection.Error, err:
+                e = "Error: %s" % err.args[0]
+                error.append(e)
+                print error
+        
+            if len(entry_dupe)>0:
+                pass
+            else:
+                sql = "INSERT INTO clips VALUES(null,?,?,?,?,?)"
+                try:
+                    cursor.execute(sql,(book_hash_id,location,entry_header,hash_id,quote,))
+                    connection.commit()
+                except connection.Error, err:
+                    e = "Error: %s" % err.args[0]
+                    error.append(e)
+                    print error
 
     cursor.close()
     connection.commit()
