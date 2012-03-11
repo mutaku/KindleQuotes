@@ -1,5 +1,17 @@
 Current version of KindleQuotes is currently in the works...
-details to come.
+
+This new version is actively being developed and, therefore, the code here will be in various stages of functionality.
+
+
+KindleQuotes takes your clippings file, called "My Clippings.txt", from your Kindle, parses this data into an SQlite database file, 
+and then provides a way to view, search and share all of your highlighted passages and notes.
+
+The initial version (commented on below) would parse a provided clippings file and generate HTML that could be stylized and included
+in a wrapper page, or dumped in MySQL. The new version aims to provide better cross-platform support and portability. Currently, this 
+involves utilizing file-based database system, SQlite, and a Tkinter GUI. The only modules needed that aren't naturally available in 
+the average Python install is PySQlite2, but will most likely be bundled in when with KindleQuotes when completed.
+
+More details will be provided soon.
 
 
 
