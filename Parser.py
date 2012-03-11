@@ -6,6 +6,7 @@ from pysqlite2 import dbapi2 as sqlite
 import Database
 import re
 import hashlib
+import platform
 
 class parse():
 	''' do the initial raw parse and split up everything by books by looking for the main entry dividers (=== etc)
@@ -24,6 +25,12 @@ class parse():
 		self.f = open(f, 'r').readlines()
 		self.error = []
 		
+		self.machine = platform.system()
+		if self.machine == "Windows":
+			self.line_ending = "\n"
+		else:
+			self.line_ending = "\r\n"
+		
 		self.clips = {}
 		n = 0
 		for line in self.f:
@@ -34,10 +41,10 @@ class parse():
 				self.this_title = line
 				n = 1
 			else:
-				if line ==  '==========\r\n':
+				if line ==  '=========='+self.line_ending:
 					n = 0
 					pass
-				elif line != '\r\n':
+				elif line != self.line_ending:
 					self.clips[self.this_title].append(line)
 		
 
@@ -82,5 +89,5 @@ class parse():
 	def dbDUMP(self):
 		''' dump into the database'''
 
-		d = Database.dump(self.db, self.clean_clips)
-		self.error.append(d.error)
+		d = Database.dump(self.db, self.clean_clips, self.line_ending)
+		self.error.append(d)

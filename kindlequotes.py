@@ -52,9 +52,9 @@ def testRun():
     
     p = Parser.parse(highlights, database)
     
-    d = p.dbDUMP()
+    p.dbDUMP()
     
-    print d.error
+    print p.error
     
 if __name__ == '__main__':
 
@@ -62,4 +62,6 @@ if __name__ == '__main__':
     root.title('KindleQuotes')
     root.config(bg="#666666")
     
-    testRun()
+    button = Button(root, command=testRun, text="Setup Profile").grid()
+    
+    root.mainloop()

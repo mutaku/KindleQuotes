@@ -35,7 +35,8 @@ def setupTables(dbname):
     connection.commit()
     connection.close()
 
-def dump(db, data):
+
+def dump(db, data, line_ending):
     '''Input data into the database on a fresh parse
             table setup: id | book (book_hash_id to match book table id)* | location* | entry_header*^ | hash_id* | quote*^
                     * inserted by us	^ pickled object
@@ -58,7 +59,7 @@ def dump(db, data):
         if "(" in k:
             book_string = k.rpartition("(")
             book_title = book_string[0]
-            book_author = book_string[2].rstrip(")\r\n")
+            book_author = book_string[2].rstrip(")"+line_ending)
         else:
             book_title = k
             book_author = "NULL"
@@ -119,3 +120,5 @@ def dump(db, data):
     cursor.close()
     connection.commit()
     connection.close()
+
+    return error
