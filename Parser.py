@@ -82,4 +82,5 @@ class parse():
 	def dbDUMP(self):
 		''' dump into the database'''
 
-		Database.dump(self.db, self.clean_clips)
+		d = Database.dump(self.db, self.clean_clips)
+		self.error.append(d.error)

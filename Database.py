@@ -73,7 +73,6 @@ def dump(db, data):
         except connection.Error, err:
             e = "Error: %s" % err.args[0]
             error.append(e)
-            print error
         
         if len(book_dupe)<1:
             try:
@@ -83,7 +82,6 @@ def dump(db, data):
             except connection.Error, err:   
                 e = "Error: %s" % err.args[0]
                 error.append(e)
-                print error
 
         the_keys = sorted(data[k].iterkeys())
         for e in the_keys:
@@ -106,7 +104,6 @@ def dump(db, data):
             except connection.Error, err:
                 e = "Error: %s" % err.args[0]
                 error.append(e)
-                print error
         
             if len(entry_dupe)>0:
                 pass
@@ -118,7 +115,6 @@ def dump(db, data):
                 except connection.Error, err:
                     e = "Error: %s" % err.args[0]
                     error.append(e)
-                    print error
 
     cursor.close()
     connection.commit()

@@ -52,8 +52,9 @@ def testRun():
     
     p = Parser.parse(highlights, database)
     
-    p.dbDUMP()
+    d = p.dbDUMP()
     
+    print d.error
     
 if __name__ == '__main__':
 
