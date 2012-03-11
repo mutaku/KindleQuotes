@@ -49,6 +49,8 @@ def dump(db, data):
     connection = sqlite.connect(db)
     cursor = connection.cursor()
     
+    connection.text_factory = str
+    
     error = []
 
     for k in data:
@@ -56,7 +58,7 @@ def dump(db, data):
         if "(" in k:
             book_string = k.rpartition("(")
             book_title = book_string[0]
-            book_author = book_string[2].rstrip(")\n")
+            book_author = book_string[2].rstrip(")\r\n")
         else:
             book_title = k
             book_author = "NULL"
@@ -78,7 +80,7 @@ def dump(db, data):
                 sql = "INSERT INTO books VALUES(?,?,?)"
                 cursor.execute(sql,(book_hash_id,book_title,book_author,))
                 connection.commit()
-            except connection.Error, err:
+            except connection.Error, err:   
                 e = "Error: %s" % err.args[0]
                 error.append(e)
                 print error

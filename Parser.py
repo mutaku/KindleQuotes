@@ -34,10 +34,10 @@ class parse():
 				self.this_title = line
 				n = 1
 			else:
-				if line ==  '==========\n':
+				if line ==  '==========\r\n':
 					n = 0
 					pass
-				elif line != '\n':
+				elif line != '\r\n':
 					self.clips[self.this_title].append(line)
 		
 
