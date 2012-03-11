@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 #	Database interactions
+# -*- coding: utf_8 -*-
     
 from pysqlite2 import dbapi2 as sqlite
 import hashlib

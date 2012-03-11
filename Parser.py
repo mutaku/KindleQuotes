@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 #	take the clippings file from kindle and parse out into database
+# -*- coding: utf_8 -*-
 
 from pysqlite2 import dbapi2 as sqlite
 import Database

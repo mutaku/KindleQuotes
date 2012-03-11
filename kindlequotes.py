@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 #	KindleQuotes - xiao_haozi@mutaku.com - http://mutaku.com
+# -*- coding: utf_8 -*-
 
 from Tkinter import *
 import tkFileDialog
