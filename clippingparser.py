@@ -8,6 +8,12 @@ import hashlib
 import platform
 import database
 
+
+def prefix_checker(pres, s):
+			'''Checks a string against list for starting sequence matches.'''
+			return any(s.startswith(p) for p in pres)
+
+
 class Parse():
 	'''
 	Do the initial raw parse and split up everything by books by looking for the main entry dividers (=== etc)
@@ -57,11 +63,6 @@ class Parse():
 			"- Bookmark",
 			"- Your Bookmark"
 		]
-		
-		def prefix_checker(pres, s):
-			'''Checks a string against list for starting sequence matches.'''
-			return any(s.startswith(p) for p in pres)
-		
 		for k in _clips:
 			self.clean_clips[k] = dict()
 			for line in _clips[k]:
