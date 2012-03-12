@@ -4,7 +4,7 @@
 
 from Tkinter import *
 import tkFileDialog
-import parser
+import clippingparser
 import database
 
 
@@ -50,7 +50,7 @@ def testRun():
     highlights = getFile("Select Kindle Highlights file: ", 'high')
     database = getFile("Select profile: ", 'db')
     
-    p = parser.Parse(highlights, database)
+    p = clippingparser.Parse(highlights, database)
     
     p.database_dump()
     

@@ -36,8 +36,8 @@ class Parse():
 		for line in _f:
 			line = re.sub(r'[\w\-][\w\-\.]+@[\w\-][\w\-\.]+[a-zA-Z]{1,4}', "__email generated __", line)
 			if _n == 0:
-				if line not in self.clips:
-					self.clips[line] = list()
+				if line not in _clips:
+					_clips[line] = list()
 				this_title = line
 				_n = 1
 			else:
