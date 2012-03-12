@@ -7,8 +7,7 @@ import hashlib
 
 
 def setup(dbname):
-    '''Setup the database and tables for a new profile'''
-    
+    '''Setup the database and tables for a new profile.'''  
     connection = sqlite.connect(dbname)
     cursor = connection.cursor()
     
@@ -37,7 +36,8 @@ def setup(dbname):
 
 
 def dump(db, data, line_ending):
-    '''Input data into the database on a fresh parse
+    '''
+    Input data into the database on a fresh parse.
             table setup: id | book (book_hash_id to match book table id)* | location* | entry_header*^ | hash_id* | quote*^
                     * inserted by us	^ pickled object
                             pickle the dirty data
@@ -46,7 +46,6 @@ def dump(db, data, line_ending):
             book table setup: book_hash_id* | title*^ | author*^
                     * inserted by us	^ pickled object
     '''
-    
     connection = sqlite.connect(db)
     cursor = connection.cursor()
     

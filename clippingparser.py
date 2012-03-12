@@ -9,10 +9,10 @@ import platform
 import database
 
 class Parse():
-	''' do the initial raw parse and split up everything by books by looking for the main entry dividers (=== etc)
-		we also use some email regex to snipe out any personal emails (amazon whisper conversions) and replace with a string
 	'''
-
+	Do the initial raw parse and split up everything by books by looking for the main entry dividers (=== etc)
+		we also use some email regex to snipe out any personal emails (amazon whisper conversions) and replace with a string.
+	'''
 	def __init__(self, f, db):
 		'''parse over raw dictionary and split up entries by looking for the entry starters (_prefix)
 			we will split by book and then store by the hashed id
@@ -20,7 +20,6 @@ class Parse():
 				we use sha224->hexdigest of the entire header portion (the "_prefix location | date" portion)
 				the hash_id is looked for before dumping each quote into the database and if found is merely skipped
 		'''
-		
 		self.db = db
 		_f = open(f, 'r').readlines()
 		self.error = []
@@ -74,8 +73,7 @@ class Parse():
 
 
 	def print_HTML(self):
-		'''directly dump an html version for testing'''
-		
+		'''Print out parsed data in HTML format ready for CSS styling.'''
 		for k in self.clean_clips:
 			print "<div class=book>",k
 			the_keys = sorted(self.clean_clips[k].iterkeys())
@@ -87,7 +85,6 @@ class Parse():
 
 
 	def database_dump(self):
-		''' dump into the database'''
-
+		'''Dump parsed data into the appropriate database.'''
 		d = database.dump(self.db, self.clean_clips, self.line_ending)
 		self.error.append(d)

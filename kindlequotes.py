@@ -9,6 +9,7 @@ import database
 
 
 def getFile(title, t):
+    '''Ask for respective file.'''
     options = {
         'parent' : root,
         'title' : title
@@ -25,6 +26,7 @@ def getFile(title, t):
     
 
 def setupProfile():
+    '''Establish a new profile and setup the tables appropriately.'''
     # instead of a save-as, could just prompt for a name in a tkinter entry then store in ~/.KindleQuotes
     options = {
         'parent' : root,
@@ -40,16 +42,10 @@ def setupProfile():
     f.close()
     
     database.setup(name)
-
-
-# test functionality for now
-def new():
-
-    setupProfile()
     
 
 def run():
-    
+    '''Get clippings file and database, run parser, and dump into database.'''
     highlights = getFile("Select Kindle Highlights file: ", 'high')
     database = getFile("Select profile: ", 'db')
     
@@ -66,7 +62,7 @@ if __name__ == '__main__':
     root.title('KindleQuotes')
     root.config(bg="#666666")
     
-    Button(root, command=new, text="Setup Profile").grid(row=0, column=0)
+    Button(root, command=setupProfile, text="Setup Profile").grid(row=0, column=0)
     Button(root, command=run, text="Update Profile").grid(row=0, column=1)
     
     root.mainloop()
