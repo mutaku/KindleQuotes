@@ -43,9 +43,12 @@ def setupProfile():
 
 
 # test functionality for now
-def testRun():
+def new():
 
     setupProfile()
+    
+
+def run():
     
     highlights = getFile("Select Kindle Highlights file: ", 'high')
     database = getFile("Select profile: ", 'db')
@@ -55,13 +58,15 @@ def testRun():
     p.database_dump()
     
     print p.error
-    
+
+
 if __name__ == '__main__':
 
     root = Tk()
     root.title('KindleQuotes')
     root.config(bg="#666666")
     
-    button = Button(root, command=testRun, text="Setup Profile").grid()
+    Button(root, command=new, text="Setup Profile").grid(row=0, column=0)
+    Button(root, command=run, text="Update Profile").grid(row=0, column=1)
     
     root.mainloop()

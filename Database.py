@@ -64,21 +64,18 @@ def dump(db, data, line_ending):
             book_title = k
             book_author = "NULL"
         
-        book_dupe = []
         try:
-            sql = "SELECT * FROM books WHERE id = ?"
-            cursor.execute(sql,(book_hash_id,))
-            cursor.fetchone()
-            for d in cursor:
-                book_dupe.append(d)
+            sql = "SELECT title FROM books WHERE id=?"
+            cursor.execute(sql, (book_hash_id,))
+            book_check = cursor.fetchone()
         except connection.Error, err:
             e = "Error: %s" % err.args[0]
             error.append(e)
-        
-        if len(book_dupe)<1:
+
+        if not book_check:
             try:
                 sql = "INSERT INTO books VALUES(?,?,?)"
-                cursor.execute(sql,(book_hash_id,book_title,book_author,))
+                cursor.execute(sql, (book_hash_id, book_title, book_author,))
                 connection.commit()
             except connection.Error, err:   
                 e = "Error: %s" % err.args[0]
@@ -94,24 +91,19 @@ def dump(db, data, line_ending):
                 quote = data[k][e][2]
             else:
                 quote = "NULL"
-            
-            entry_dupe = []
+
             try:
                 sql = "SELECT id FROM clips WHERE hash_id LIKE ?"
-                cursor.execute(sql,(hash_id,))
-                cursor.fetchone()
-                for d in cursor:
-                    entry_dupe.append(d)
+                cursor.execute(sql, (hash_id,))
+                quote_check = cursor.fetchone()
             except connection.Error, err:
                 e = "Error: %s" % err.args[0]
                 error.append(e)
         
-            if len(entry_dupe)>0:
-                pass
-            else:
+            if not quote_check:
                 sql = "INSERT INTO clips VALUES(null,?,?,?,?,?)"
                 try:
-                    cursor.execute(sql,(book_hash_id,location,entry_header,hash_id,quote,))
+                    cursor.execute(sql, (book_hash_id, location, entry_header, hash_id,quote,))
                     connection.commit()
                 except connection.Error, err:
                     e = "Error: %s" % err.args[0]
