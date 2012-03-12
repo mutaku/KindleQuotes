@@ -49,19 +49,32 @@ class Parse():
 
 		self.clean_clips = {}
 		_n = 0
-		_hPrefix = "- Highlight"
-		_nPrefix = "- Note"
-		_bPrefix = "- Bookmark"
+		_prefixes = [
+			"- Highlight",
+			"- Your Highlight",
+			"- Note",
+			"- Your Note",
+			"- Bookmark",
+			"- Your Bookmark"
+		]
+		
+		def prefix_checker(pres, s):
+			'''Checks a string against list for starting sequence matches.'''
+			return any(s.startswith(p) for p in pres)
+		
 		for k in _clips:
 			self.clean_clips[k] = dict()
 			for line in _clips[k]:
-				if line.startswith(_hPrefix) or line.startswith(_nPrefix) or line.startswith(_bPrefix):
+				if prefix_checker(_prefixes, line):
 					_n = 0
 				else:
 					_n = 1
 				if _n == 0:
 					this_entry = line
-					this_loc = int(this_entry.split('Loc.')[1].strip().split('-')[0].split(' ')[0])
+					try:
+						this_loc = int(this_entry.split('Loc.')[1].strip().split('-')[0].split(' ')[0])
+					except:
+						this_loc = int(this_entry.split('Location')[1].strip().split('-')[0].split(' ')[0])
 					this_id = hashlib.sha224(line).hexdigest()
 					self.clean_clips[k][this_id] = list()
 					self.clean_clips[k][this_id].append(this_loc)

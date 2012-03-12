@@ -35,6 +35,45 @@ def setup(dbname):
     connection.close()
 
 
+def search(db, s):
+    '''Search database for string.'''
+    connection = sqlite.connect(db)
+    cursor = connection.cursor()
+    
+    connection.text_factory = str
+    
+    error = []
+    
+    query_list = s.split(" ")
+    array = list(s.replace(" ", "%"))
+    array[:0] = "%"
+    array.append("%")
+    query_string = "".join(array)
+    
+    try:
+        sql = "SELECT * FROM clips WHERE quote LIKE ?"
+        cursor.execute(sql, (query_string,))
+        clips = cursor.fetchall()
+    except connection.Error, err:   
+        e = "Error: %s" % err.args[0]
+        error.append(e)   
+
+    book_ids = []
+    for c in clips:
+        if c[1] not in book_ids:
+            book_ids.append(c[1])
+    
+    try:
+        books = []
+        for i in book_ids:
+            sql = "SELECT * FROM books WHERE id=?"
+            cursor.execute(sql, (i,))
+            books.append(cursor.fetchone())
+    except connection.Error, err:   
+        e = "Error: %s" % err.args[0]
+        error.append(e) 
+
+
 def dump(db, data, line_ending):
     '''
     Input data into the database on a fresh parse.
