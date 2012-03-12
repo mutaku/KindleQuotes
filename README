@@ -11,6 +11,12 @@ in a wrapper page, or dumped in MySQL. The new version aims to provide better cr
 involves utilizing file-based database system, SQlite, and a Tkinter GUI. The only modules needed that aren't naturally available in 
 the average Python install is PySQlite2, but will most likely be bundled in when with KindleQuotes when completed.
 
+
+To access your clippings file, mount your Kindle device and navigate to Documents within the root. It will be found in that directory
+along with your books. It will be called "My Clippings.txt" and you may load this directly into KindleQuotes, or better, copy to your
+machine first.
+
+
 More details will be provided soon.
 
 
