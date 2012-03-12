@@ -6,7 +6,7 @@ from pysqlite2 import dbapi2 as sqlite
 import hashlib
 
 
-def setupTables(dbname):
+def setup(dbname):
     '''Setup the database and tables for a new profile'''
     
     connection = sqlite.connect(dbname)
@@ -59,7 +59,7 @@ def dump(db, data, line_ending):
         if "(" in k:
             book_string = k.rpartition("(")
             book_title = book_string[0]
-            book_author = book_string[2].rstrip(")"+line_ending)
+            book_author = book_string[2].rstrip(''.join([")",line_ending]))
         else:
             book_title = k
             book_author = "NULL"

@@ -4,8 +4,8 @@
 
 from Tkinter import *
 import tkFileDialog
-import Parser
-import Database
+import parser
+import database
 
 
 def getFile(title, t):
@@ -34,12 +34,12 @@ def setupProfile():
     
     name = tkFileDialog.asksaveasfilename(**options)
     if not name.endswith('.s3db'):
-        name = name+'.s3db'
+        name = ''.join([name,'.s3db'])
     
     f = open(name, 'w')
     f.close()
     
-    Database.setupTables(name)
+    database.setup(name)
 
 
 # test functionality for now
@@ -50,9 +50,9 @@ def testRun():
     highlights = getFile("Select Kindle Highlights file: ", 'high')
     database = getFile("Select profile: ", 'db')
     
-    p = Parser.parse(highlights, database)
+    p = parser.Parse(highlights, database)
     
-    p.dbDUMP()
+    p.database_dump()
     
     print p.error
     

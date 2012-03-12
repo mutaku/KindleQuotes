@@ -3,12 +3,12 @@
 # -*- coding: utf_8 -*-
 
 from pysqlite2 import dbapi2 as sqlite
-import Database
 import re
 import hashlib
 import platform
+import database
 
-class parse():
+class Parse():
 	''' do the initial raw parse and split up everything by books by looking for the main entry dividers (=== etc)
 		we also use some email regex to snipe out any personal emails (amazon whisper conversions) and replace with a string
 	'''
@@ -41,7 +41,7 @@ class parse():
 				self.this_title = line
 				n = 1
 			else:
-				if line ==  '=========='+self.line_ending:
+				if line ==  ''.join(['==========',self.line_ending]):
 					n = 0
 					pass
 				elif line != self.line_ending:
@@ -73,7 +73,7 @@ class parse():
 					n = 0
 
 
-	def doHTML(self):
+	def print_HTML(self):
 		'''directly dump an html version for testing'''
 		
 		for k in self.clean_clips:
@@ -86,8 +86,8 @@ class parse():
 			print "</div>"
 
 
-	def dbDUMP(self):
+	def database_dump(self):
 		''' dump into the database'''
 
-		d = Database.dump(self.db, self.clean_clips, self.line_ending)
+		d = database.dump(self.db, self.clean_clips, self.line_ending)
 		self.error.append(d)
