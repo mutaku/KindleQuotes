@@ -22,45 +22,45 @@ class Parse():
 		'''
 		
 		self.db = db
-		self.f = open(f, 'r').readlines()
+		_f = open(f, 'r').readlines()
 		self.error = []
 		
-		self.machine = platform.system()
-		if self.machine == "Windows":
+		_machine = platform.system()
+		if _machine == "Windows":
 			self.line_ending = "\n"
 		else:
 			self.line_ending = "\r\n"
 		
-		self.clips = {}
-		n = 0
-		for line in self.f:
+		_clips = {}
+		_n = 0
+		for line in _f:
 			line = re.sub(r'[\w\-][\w\-\.]+@[\w\-][\w\-\.]+[a-zA-Z]{1,4}', "__email generated __", line)
-			if n == 0:
+			if _n == 0:
 				if line not in self.clips:
 					self.clips[line] = list()
-				self.this_title = line
-				n = 1
+				this_title = line
+				_n = 1
 			else:
 				if line ==  ''.join(['==========',self.line_ending]):
-					n = 0
+					_n = 0
 					pass
 				elif line != self.line_ending:
-					self.clips[self.this_title].append(line)
+					_clips[this_title].append(line)
 		
 
 		self.clean_clips = {}
-		n = 0
-		h_prefix = "- Highlight"
-		n_prefix = "- Note"
-		b_prefix = "- Bookmark"
-		for k in self.clips:
+		_n = 0
+		_hPrefix = "- Highlight"
+		_nPrefix = "- Note"
+		_bPrefix = "- Bookmark"
+		for k in _clips:
 			self.clean_clips[k] = dict()
-			for line in self.clips[k]:
-				if line.startswith(h_prefix) or line.startswith(n_prefix) or line.startswith(b_prefix):
-					n = 0
+			for line in _clips[k]:
+				if line.startswith(_hPrefix) or line.startswith(_nPrefix) or line.startswith(_bPrefix):
+					_n = 0
 				else:
-					n = 1
-				if n == 0:
+					_n = 1
+				if _n == 0:
 					this_entry = line
 					this_loc = int(this_entry.split('Loc.')[1].strip().split('-')[0].split(' ')[0])
 					this_id = hashlib.sha224(line).hexdigest()
@@ -70,7 +70,7 @@ class Parse():
 					
 				else:
 					self.clean_clips[k][this_id].append(line)
-					n = 0
+					_n = 0
 
 
 	def print_HTML(self):
