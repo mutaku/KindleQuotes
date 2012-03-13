@@ -53,10 +53,30 @@ def setupProfile():
     profile_label['text'] = profile.database
 
 
+def retrieveData():
+    '''Get Data for profile from database.'''
+    d = database.Retrieve(profile.database)
+
+    profile.books = d.books()
+    updateBookList()
+
+
+def updateBookList():
+    '''Update the books listed in main display.'''
+    msg_box.delete(0, END)
+
+    for b in profile.books:
+        entry = "  |  ".join([b[1],b[2]])
+        msg_box.insert(END, entry)
+
+
 def selectProfile():
     '''Get profile.'''
     profile.database = getFile("Select profile: ", 'db')
     profile_label['text'] = profile.database
+    
+    retrieveData()
+
 
 def run():
     '''Get clippings file and database, run parser, and dump into database.'''
@@ -72,7 +92,9 @@ def run():
     if p.error:
         print p.error
     else:
+        retrieveData()
         print "success."
+
 
 def do_search():
     search_str = search_entry.get().lower()
@@ -82,7 +104,10 @@ def do_search():
     
     s = database.Search(profile.database, search_str)
     
+    profile.data = s.books
+    updateBookList()
     print s.clips
+
 
 class Book():
     '''Book sorting.'''
@@ -99,6 +124,7 @@ class Book():
         '''Sort by Title.'''
         pass
 
+
 if __name__ == '__main__':
 
     profile = Profile()
@@ -112,15 +138,15 @@ if __name__ == '__main__':
     main_menu.add_command(label="Exit", command=root.destroy)
     menubar.add_cascade(label="KindlQuotes", menu=main_menu)
     
-    sync_menu = Menu(menubar, tearoff=0)
-    sync_menu.add_command(label="Sync Database", command=run)
-    menubar.add_cascade(label="Sync", menu=sync_menu)
-    
     pro_menu = Menu(menubar, tearoff=0)
     pro_menu.add_command(label="Open/Switch Profile", command=selectProfile)
     pro_menu.add_command(label="New Profile", command=setupProfile)
     menubar.add_cascade(label="Profile", menu=pro_menu)
-    
+
+    sync_menu = Menu(menubar, tearoff=0)
+    sync_menu.add_command(label="Sync Database", command=run)
+    menubar.add_cascade(label="Sync", menu=sync_menu)
+
     book_menu = Menu(menubar, tearoff=0)
     book_menu.add_command(label="Sort by Author[LAST]", command=Book.author)
     book_menu.add_command(label="Sort by Title", command=Book.title)

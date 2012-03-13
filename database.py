@@ -115,6 +115,39 @@ def dump(db, data, line_ending):
     return error
 
 
+class Retrieve():
+    '''Grab database data.'''
+    def __init__(self, db):
+        self.connection = sqlite.connect(db)
+        self.cursor = self.connection.cursor()
+        
+        self.connection.text_factory = str
+        
+        self.error = []
+
+    def books(self):
+        '''Get all books.'''
+        try:
+            sql = "SELECT * FROM books"
+            self.cursor.execute(sql)
+            data = self.cursor.fetchall()
+            return data
+        except self.connection.Error, err:   
+            e = "Error: %s" % err.args[0]
+            self.error.append(e)
+
+    def quotes(self):
+        '''Get all quotes.'''
+        try:
+            sql = "SELECT * FROM clips"
+            self.cursor.execute(sql)
+            data = self.cursor.fetchall()
+            return data
+        except self.connection.Error, err:   
+            e = "Error: %s" % err.args[0]
+            self.error.append(e)  
+
+
 class Search():
     '''Search database for string.'''
     def __init__(self, db, s):
@@ -139,14 +172,14 @@ class Search():
             e = "Error: %s" % err.args[0]
             self.error.append(e)   
     
-        book_ids = []
+        self.book_ids = []
         for c in self.clips:
-            if c[1] not in book_ids:
-                book_ids.append(c[1])
+            if c[1] not in self.book_ids:
+                self.book_ids.append(c[1])
         
         try:
             self.books = []
-            for i in book_ids:
+            for i in self.book_ids:
                 sql = "SELECT * FROM books WHERE id=?"
                 cursor.execute(sql, (i,))
                 self.books.append(cursor.fetchone())
