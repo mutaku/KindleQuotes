@@ -174,7 +174,7 @@ if __name__ == '__main__':
     Label(frame2, text="Author[LAST, FIRST]", bg="#666", fg="#808080").grid(row=0, column=0)
     Label(frame2, text="Title", bg="#666", fg="#808080").grid(row=0, column=1)
     scroll_msg = Scrollbar(frame2, orient=VERTICAL)
-    msg_box = Listbox(frame2, fg="#000", bg="#ccc", width=100, height=20, yscrollcommand=scroll_msg.set)
+    msg_box = Listbox(frame2, fg="#000", bg="#ccc", width=100, height=20, selectmode=MULTIPLE, selectbackground="#666", selectforeground="#ccc", yscrollcommand=scroll_msg.set)
     scroll_msg.config(command=msg_box.yview, highlightbackground="#fff")
     scroll_msg.grid(row=1, column=1, sticky=N+S)
     msg_box.grid(row=1, column=0, sticky=E+W)
