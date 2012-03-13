@@ -10,8 +10,8 @@ import database
 
 
 def prefix_checker(pres, s):
-			'''Checks a string against list for starting sequence matches.'''
-			return any(s.startswith(p) for p in pres)
+	'''Checks a string against list for starting sequence matches.'''
+	return any(s.startswith(p) for p in pres)
 
 
 class Parse():
