@@ -104,7 +104,7 @@ def do_search():
     
     s = database.Search(profile.database, search_str)
     
-    profile.data = s.books
+    profile.books = s.books
     updateBookList()
     print s.clips
 
@@ -136,7 +136,7 @@ if __name__ == '__main__':
     
     main_menu = Menu(menubar, tearoff=0)
     main_menu.add_command(label="Exit", command=root.destroy)
-    menubar.add_cascade(label="KindlQuotes", menu=main_menu)
+    menubar.add_cascade(label="KindleQuotes", menu=main_menu)
     
     pro_menu = Menu(menubar, tearoff=0)
     pro_menu.add_command(label="Open/Switch Profile", command=selectProfile)
