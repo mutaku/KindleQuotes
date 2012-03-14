@@ -118,7 +118,13 @@ def get_book(sel):
     
 
 def sort_column(e):
-    msg_box.sort(column=e.column)
+    msg_box.sort(column=e.column, mode=msg_box.sorting_order[e.column])
+    if msg_box.sorting_order[e.column] == 'increasing':
+        msg_box.column_configure(msg_box.column(e.column), arrow='up')
+        msg_box.sorting_order[e.column] = 'decreasing'
+    else:
+        msg_box.column_configure(msg_box.column(e.column), arrow='down')
+        msg_box.sorting_order[e.column] = 'increasing'
 
   
 
@@ -147,7 +153,7 @@ if __name__ == '__main__':
 
     book_menu = Menu(menubar, tearoff=0)
     book_menu.add_command(label="Sort by Author[LAST]", command=lambda: msg_box.sort(column=0))
-    book_menu.add_command(label="Sort by Title", command=lambda: rmsg_box.sort(column=1))
+    book_menu.add_command(label="Sort by Title", command=lambda: msg_box.sort(column=1))
     menubar.add_cascade(label="Books", menu=book_menu)
     
     root.config(bg="#666", menu=menubar)
@@ -170,7 +176,6 @@ if __name__ == '__main__':
     Button(frame1, command=do_search, text="Search Quotes").grid(row=0, column=9, sticky=E)
     
     scroll_msg = Scrollbar(frame2, orient=VERTICAL)
-    #msg_box = Listbox(frame2, fg="#000", bg="#ccc", width=100, height=20, selectmode=MULTIPLE, selectbackground="#666", selectforeground="#ccc", yscrollcommand=scroll_msg.set)
     msg_box = treectrl.MultiListbox(frame2)
     msg_box.config(selectcmd=get_book, selectmode='extended', columns=('Author[Last,First]', 'Title'), expandcolumns=[0,1], width=750)
     msg_box.column_configure(msg_box.column(0), arrow='down', arrowgravity='right')
@@ -180,5 +185,7 @@ if __name__ == '__main__':
     scroll_msg.config(command=msg_box.yview, highlightbackground="#fff")
     scroll_msg.grid(row=1, column=1, sticky=N+S)
     msg_box.grid(row=1, column=0, sticky=E+W)
+    
+    msg_box.sorting_order = {0:'increasing', 1:'increasing'}
     
     root.mainloop()
