@@ -4,6 +4,7 @@
 
 from Tkinter import *
 import tkFileDialog
+import TkTreectrl as treectrl
 import clippingparser
 import database
 
@@ -66,8 +67,9 @@ def updateBookList():
     msg_box.delete(0, END)
 
     for b in profile.books:
-        entry = "  |  ".join([b[1],b[2]])
-        msg_box.insert(END, entry)
+        entry = (b[2], b[1])
+        msg_box.insert(END, *entry)
+
 
 
 def selectProfile():
@@ -109,6 +111,10 @@ def do_search():
     print s.clips
 
 
+def get_book(sel):
+    '''Open selected book.'''
+    print sel
+
 class Book():
     '''Book sorting.'''
     # THIS IS NOT CORRECT - Need to set this up properly when more lucid
@@ -123,6 +129,7 @@ class Book():
     def title(self):
         '''Sort by Title.'''
         pass
+    
 
 
 if __name__ == '__main__':
@@ -171,10 +178,10 @@ if __name__ == '__main__':
     search_box.grid(row=0, column=5, columnspan=4, sticky=W)
     Button(frame1, command=do_search, text="Search Quotes").grid(row=0, column=9, sticky=E)
     
-    Label(frame2, text="Author[LAST, FIRST]", bg="#666", fg="#808080").grid(row=0, column=0)
-    Label(frame2, text="Title", bg="#666", fg="#808080").grid(row=0, column=1)
     scroll_msg = Scrollbar(frame2, orient=VERTICAL)
-    msg_box = Listbox(frame2, fg="#000", bg="#ccc", width=100, height=20, selectmode=MULTIPLE, selectbackground="#666", selectforeground="#ccc", yscrollcommand=scroll_msg.set)
+    #msg_box = Listbox(frame2, fg="#000", bg="#ccc", width=100, height=20, selectmode=MULTIPLE, selectbackground="#666", selectforeground="#ccc", yscrollcommand=scroll_msg.set)
+    msg_box = treectrl.MultiListbox(frame2)
+    msg_box.config(selectcmd=get_book, selectmode='extended', columns=('Author[Last,First]', 'Title'), width=750)
     scroll_msg.config(command=msg_box.yview, highlightbackground="#fff")
     scroll_msg.grid(row=1, column=1, sticky=N+S)
     msg_box.grid(row=1, column=0, sticky=E+W)
