@@ -69,7 +69,8 @@ def updateBookList():
     for b in profile.books:
         entry = (b[2], b[1])
         msg_box.insert(END, *entry)
-
+    
+    msg_box.sort(0)
 
 
 def selectProfile():
@@ -113,23 +114,13 @@ def do_search():
 
 def get_book(sel):
     '''Open selected book.'''
-    print sel
+    print msg_box.get(sel[0])
+    
 
-class Book():
-    '''Book sorting.'''
-    # THIS IS NOT CORRECT - Need to set this up properly when more lucid
-    
-    def __init__self():
-        pass
-    
-    def author(self):
-        '''Sort by Author[LAST].'''
-        pass
-    
-    def title(self):
-        '''Sort by Title.'''
-        pass
-    
+def sort_column(e):
+    msg_box.sort(column=e.column)
+
+  
 
 
 if __name__ == '__main__':
@@ -155,8 +146,8 @@ if __name__ == '__main__':
     menubar.add_cascade(label="Sync", menu=sync_menu)
 
     book_menu = Menu(menubar, tearoff=0)
-    book_menu.add_command(label="Sort by Author[LAST]", command=Book.author)
-    book_menu.add_command(label="Sort by Title", command=Book.title)
+    book_menu.add_command(label="Sort by Author[LAST]", command=lambda: msg_box.sort(column=0))
+    book_menu.add_command(label="Sort by Title", command=lambda: rmsg_box.sort(column=1))
     menubar.add_cascade(label="Books", menu=book_menu)
     
     root.config(bg="#666", menu=menubar)
@@ -181,7 +172,11 @@ if __name__ == '__main__':
     scroll_msg = Scrollbar(frame2, orient=VERTICAL)
     #msg_box = Listbox(frame2, fg="#000", bg="#ccc", width=100, height=20, selectmode=MULTIPLE, selectbackground="#666", selectforeground="#ccc", yscrollcommand=scroll_msg.set)
     msg_box = treectrl.MultiListbox(frame2)
-    msg_box.config(selectcmd=get_book, selectmode='extended', columns=('Author[Last,First]', 'Title'), width=750)
+    msg_box.config(selectcmd=get_book, selectmode='extended', columns=('Author[Last,First]', 'Title'), expandcolumns=[0,1], width=750)
+    msg_box.column_configure(msg_box.column(0), arrow='down', arrowgravity='right')
+    msg_box.column_configure(msg_box.column(1), arrow='down', arrowgravity='right')
+    msg_box.notify_install('<Header-invoke>')
+    msg_box.notify_bind('<Header-invoke>', sort_column)
     scroll_msg.config(command=msg_box.yview, highlightbackground="#fff")
     scroll_msg.grid(row=1, column=1, sticky=N+S)
     msg_box.grid(row=1, column=0, sticky=E+W)
