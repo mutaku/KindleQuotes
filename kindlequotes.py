@@ -115,7 +115,7 @@ def do_search():
     if not hasattr(profile, 'database'):
         selectProfile()
     
-    s = database.Search(profile.database, profile.book_id, search_str, nocase=True)
+    s = database.Search(profile.database, profile.book_id, search_str)
     
     profile.search_terms = s.query_list
     
@@ -220,7 +220,7 @@ def show_search(win, term):
     
     count = IntVar()
     while True:
-        i = win.search(term, "matchEnd", "searchLimit", count=count)
+        i = win.search(term, "matchEnd", "searchLimit", count=count, nocase=True)
         if not i:
             break
         win.mark_set("matchStart", i)
