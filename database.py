@@ -90,7 +90,8 @@ def dump(db, data, line_ending):
             if len(data[k][e])>2:
                 quote = data[k][e][2]
             else:
-                quote = "NULL"
+                # should be a bookmark if empty (?)
+                quote = "-place holder entity-"
 
             quote_check = []
             try:

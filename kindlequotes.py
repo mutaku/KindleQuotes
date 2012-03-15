@@ -106,11 +106,9 @@ def run():
     
     p.database_dump()
     
-    if p.error:
-        print p.error
-    else:
-        retrieveData()
-        print "success."
+    print p.error
+    retrieveData(t='books')
+
 
 
 def do_search():
@@ -143,15 +141,18 @@ def show_quote(sel):
     # for testing:
     #profile.search_terms = ['to', 'and', 'or']
     
-    for s in profile.search_terms:
-        show_search(t, s)
-    t.tag_configure("sr", foreground="white", background="black")
+    if profile.search_terms:
+        for s in profile.search_terms:
+            show_search(t, s)
+        t.tag_configure("sr", foreground="white", background="black")
 
 
 def get_book(sel):
     '''Open selected book.'''
     global quote_box
     global search_entry
+    
+    profile.search_terms = []
     
     book_string = msg_box.get(sel[0])[0]
     profile.book_id = book_string[2]

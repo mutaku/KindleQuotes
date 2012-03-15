@@ -5,7 +5,6 @@
 from pysqlite2 import dbapi2 as sqlite
 import re
 import hashlib
-import platform
 import database
 
 
@@ -27,14 +26,10 @@ class Parse():
 				the hash_id is looked for before dumping each quote into the database and if found is merely skipped
 		'''
 		self.db = db
-		_f = open(f, 'r').readlines()
+		_f = open(f, 'rU').readlines()
 		self.error = []
 		
-		_machine = platform.system()
-		if _machine == "Windows":
-			self.line_ending = "\n"
-		else:
-			self.line_ending = "\r\n"
+		self.line_ending = "\n"
 		
 		_clips = {}
 		_n = 0
