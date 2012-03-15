@@ -126,6 +126,17 @@ def do_search():
     print s.clips
 
 
+def show_quote(sel):
+    '''Open selected quote.'''
+    quote = quote_box.get(sel[0])[0][1]
+
+    ind_quote_win = Toplevel(root)
+    ind_quote_win.config(bg="#666")
+    
+    t = Text(ind_quote_win, wrap=WORD)
+    t.grid()
+    t.insert(END, quote)
+
 def get_book(sel):
     '''Open selected book.'''
     global quote_box
@@ -148,7 +159,7 @@ def get_book(sel):
     scroll_quote.grid(row=0, column=1, sticky=N+S)
     quote_box.grid(row=0, column=0, sticky=E+W)
 
-    quote_box.config(selectcmd=None, selectmode='extended', columns=('Location', 'Quote'), expandcolumns=[1], width=750)
+    quote_box.config(selectcmd=show_quote, selectmode='extended', columns=('Location', 'Quote'), expandcolumns=[1], width=750)
     [[quote_box.column_configure(quote_box.column(x), arrow='down', arrowgravity='right')] for x in range(2)]
     quote_box.notify_install('<Header-invoke>')
     quote_box.notify_bind('<Header-invoke>', lambda: sort_column(quote_box))
