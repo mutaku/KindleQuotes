@@ -84,7 +84,7 @@ def updateQuoteList():
         entry = (q[2], q[5])
         quote_box.insert(END, *entry)
     
-    quote_box.sort(0, mode="decreasing")
+    quote_box.sort(0, mode="increasing")
 
 
 def selectProfile():
@@ -136,6 +136,9 @@ def show_quote(sel):
     t = Text(ind_quote_win, wrap=WORD)
     t.grid()
     t.insert(END, quote)
+    
+    show_search(t, "to")
+    t.tag_configure("sr", foreground="white", background="black")
 
 def get_book(sel):
     '''Open selected book.'''
@@ -181,7 +184,31 @@ def sort_column(e):
         msg_box.column_configure(msg_box.column(e.column), arrow='down')
         msg_box.sorting_order[e.column] = 'increasing'
 
-  
+
+def color_text(edit, tag, word, fg_color='black', bg_color='white'):
+    # add a space to the end of the word
+    word = word + " "
+    edit.insert('end', word)
+    end_index = edit.index('end')
+    begin_index = "%s-%sc" % (end_index, len(word) + 1)
+    edit.tag_add(tag, begin_index, end_index)
+    edit.tag_config(tag, foreground=fg_color, background=bg_color)
+
+
+def show_search(win, term):
+    '''Showcase search terms'''
+    win.mark_set("matchStart", win.index(1.0))
+    win.mark_set("matchEnd", win.index(1.0))
+    win.mark_set("searchLimit", win.index(END))
+    
+    count = IntVar()
+    while True:
+        i = win.search(term, "matchEnd", "searchLimit", count=count)
+        if not i:
+            break
+        win.mark_set("matchStart", i)
+        win.mark_set("matchEnd", "%s+%sc" % (i, count.get()))
+        win.tag_add("sr", "matchStart", "matchEnd")
 
 
 if __name__ == '__main__':
