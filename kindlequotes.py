@@ -81,10 +81,10 @@ def updateQuoteList():
     quote_box.delete(0, END)
 
     for q in profile.quotes:
-        entry = (b[2], b[4])
+        entry = (q[2], q[5])
         quote_box.insert(END, *entry)
     
-    quote_box.sort(0)
+    quote_box.sort(0, mode="decreasing")
 
 
 def selectProfile():
@@ -130,8 +130,12 @@ def get_book(sel):
     '''Open selected book.'''
     global quote_box
     
+    book_string = msg_box.get(sel[0])[0]
+    book_id = book_string[2]
+    book_title = " - ".join([book_string[1],book_string[0]])
+    
     quote_win = Toplevel(root)
-    quote_win.title(sel[0])
+    quote_win.title(book_title)
     quote_win.config(bg="#666")
     
     qf = Frame(quote_win)
@@ -139,7 +143,7 @@ def get_book(sel):
     qf.grid()
     
     scroll_quote = Scrollbar(qf, orient=VERTICAL)
-    quote_box = treectrl.MultiListbox(qf)
+    quote_box = treectrl.MultiListbox(qf, yscrollcommand=scroll_quote.set)
     scroll_quote.config(command=quote_box.yview, highlightbackground="#fff")
     scroll_quote.grid(row=0, column=1, sticky=N+S)
     quote_box.grid(row=0, column=0, sticky=E+W)
@@ -151,8 +155,7 @@ def get_book(sel):
     quote_box.colors = ('white', '#ffdddd', 'white', '#ddeeff')
     [[quote_box.column_configure(quote_box.column(x), itembackground=quote_box.colors)] for x in range(2)]
     quote_box.sorting_order = {0:'increasing', 1:'increasing'}
-    
-    book_id = msg_box.get(sel[0])[0][2]
+
     retrieveData(t="quotes", book=book_id)
 
 
@@ -217,7 +220,7 @@ if __name__ == '__main__':
     Button(frame1, command=do_search, text="Search Quotes").grid(row=0, column=9, sticky=E)
     
     scroll_msg = Scrollbar(frame2, orient=VERTICAL)
-    msg_box = treectrl.MultiListbox(frame2)
+    msg_box = treectrl.MultiListbox(frame2, yscrollcommand=scroll_msg.set)
     scroll_msg.config(command=msg_box.yview, highlightbackground="#fff")
     scroll_msg.grid(row=1, column=1, sticky=N+S)
     msg_box.grid(row=1, column=0, sticky=E+W)

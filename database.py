@@ -140,7 +140,7 @@ class Retrieve():
         '''Get quotes for a selected book id.'''
         try:
             sql = "SELECT * FROM clips WHERE book=?"
-            self.cursor.execute(sql (book,))
+            self.cursor.execute(sql, (book,))
             data = self.cursor.fetchall()
             return data
         except self.connection.Error, err:   
