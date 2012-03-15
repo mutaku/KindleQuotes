@@ -119,11 +119,14 @@ def do_search():
     if not hasattr(profile, 'database'):
         selectProfile()
     
-    s = database.Search(profile.database, search_str)
+    s = database.Search(profile.database, profile.book_id, search_str)
     
-    profile.books = s.books
-    updateBookList()
-    print s.clips
+    profile.search_terms = s.query_list
+    
+    #profile.books = s.books
+    #updateBookList()
+    profile.quotes = s.clips
+    updateQuoteList()
 
 
 def show_quote(sel):
@@ -138,7 +141,7 @@ def show_quote(sel):
     t.insert(END, quote)
     
     # for testing:
-    profile.search_terms = ['to', 'and', 'or']
+    #profile.search_terms = ['to', 'and', 'or']
     
     for s in profile.search_terms:
         show_search(t, s)
@@ -148,18 +151,28 @@ def show_quote(sel):
 def get_book(sel):
     '''Open selected book.'''
     global quote_box
+    global search_entry
     
     book_string = msg_box.get(sel[0])[0]
-    book_id = book_string[2]
-    book_title = " - ".join([book_string[1],book_string[0]])
+    profile.book_id = book_string[2]
+    profile.book_title = " - ".join([book_string[1],book_string[0]])
     
     quote_win = Toplevel(root)
-    quote_win.title(book_title)
+    quote_win.title(profile.book_title)
     quote_win.config(bg="#666")
-    
+
+    qs = Frame(quote_win)
+    qs.config(pady=2, bg="#666")
+    qs.grid()
+
     qf = Frame(quote_win)
-    qf.config(heigh=30, pady=10)
+    qf.config(height=30, pady=10)
     qf.grid()
+    
+    search_entry = StringVar()
+    search_box = Entry(qs, textvariable=search_entry)
+    search_box.grid(row=0, column=0, columnspan=4, sticky=W)
+    Button(qs, command=do_search, text="Search Quotes").grid(row=0, column=4, sticky=E)
     
     scroll_quote = Scrollbar(qf, orient=VERTICAL)
     quote_box = treectrl.MultiListbox(qf, yscrollcommand=scroll_quote.set)
@@ -175,7 +188,7 @@ def get_book(sel):
     [[quote_box.column_configure(quote_box.column(x), itembackground=quote_box.colors)] for x in range(2)]
     quote_box.sorting_order = {0:'increasing', 1:'increasing'}
 
-    retrieveData(t="quotes", book=book_id)
+    retrieveData(t="quotes", book=profile.book_id)
 
 
 def sort_column(e):
@@ -256,11 +269,6 @@ if __name__ == '__main__':
     Label(frame1, text="Active Profile:", bg="#666", fg="#808080").grid(row=0, column=0, sticky=W)
     profile_label = Label(frame1, text="Create or Select a profile.", bg="#666", fg="#ccc")
     profile_label.grid(row=0, column=1, columnspan=4, sticky=E)
-    
-    search_entry = StringVar()
-    search_box = Entry(frame1, textvariable=search_entry, fg="#000", bg="#ccc")
-    search_box.grid(row=0, column=5, columnspan=4, sticky=W)
-    Button(frame1, command=do_search, text="Search Quotes").grid(row=0, column=9, sticky=E)
     
     scroll_msg = Scrollbar(frame2, orient=VERTICAL)
     msg_box = treectrl.MultiListbox(frame2, yscrollcommand=scroll_msg.set)

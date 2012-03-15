@@ -152,7 +152,7 @@ class Retrieve():
 
 class Search():
     '''Search database for string.'''
-    def __init__(self, db, s):
+    def __init__(self, db, b_id, s):
         connection = sqlite.connect(db)
         cursor = connection.cursor()
         
@@ -167,8 +167,8 @@ class Search():
         query_string = "".join(array)
         
         try:
-            sql = "SELECT * FROM clips WHERE quote LIKE ?"
-            cursor.execute(sql, (query_string,))
+            sql = "SELECT * FROM clips WHERE quote LIKE ? and book=?"
+            cursor.execute(sql, (query_string, b_id,))
             self.clips = cursor.fetchall()
         except connection.Error, err:   
             e = "Error: %s" % err.args[0]
