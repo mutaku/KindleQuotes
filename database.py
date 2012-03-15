@@ -136,11 +136,11 @@ class Retrieve():
             e = "Error: %s" % err.args[0]
             self.error.append(e)
 
-    def quotes(self):
-        '''Get all quotes.'''
+    def quotes(self, book=None):
+        '''Get quotes for a selected book id.'''
         try:
-            sql = "SELECT * FROM clips"
-            self.cursor.execute(sql)
+            sql = "SELECT * FROM clips WHERE book=?"
+            self.cursor.execute(sql (book,))
             data = self.cursor.fetchall()
             return data
         except self.connection.Error, err:   
