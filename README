@@ -20,3 +20,15 @@ machine first.
 More details will be provided soon.
 
 
+Required Software (should later come packaged):
+- pysqlite2 and sqlite3
+- python (w/tk)
+- tktreectrl*
+
+*tktreectrl can be tricky to setup depending on the platform. 
+Instructions to come, but you can get started by following the 
+instructions on the tktreectrl site 
+(http://klappnase.bubble.org/TkinterTreectrl/). You'll need to grab the 
+zip 
+file provided for the python module and the archive through sourceforge 
+for the tcl/tk bindings.
