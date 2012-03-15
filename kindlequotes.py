@@ -103,12 +103,10 @@ def run():
         selectProfile()
     
     p = clippingparser.Parse(profile.highlights, profile.database)
+    print p.clean_clips
     
     p.database_dump()
-    
-    print p.error
     retrieveData(t='books')
-
 
 
 def do_search():
