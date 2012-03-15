@@ -63,6 +63,7 @@ def dump(db, data, line_ending):
             book_title = k
             book_author = "NULL"
         
+        book_check = []
         try:
             sql = "SELECT title FROM books WHERE id=?"
             cursor.execute(sql, (book_hash_id,))
@@ -91,6 +92,7 @@ def dump(db, data, line_ending):
             else:
                 quote = "NULL"
 
+            quote_check = []
             try:
                 sql = "SELECT id FROM clips WHERE hash_id LIKE ?"
                 cursor.execute(sql, (hash_id,))

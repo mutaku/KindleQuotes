@@ -137,8 +137,13 @@ def show_quote(sel):
     t.grid()
     t.insert(END, quote)
     
-    show_search(t, "to")
+    # for testing:
+    profile.search_terms = ['to', 'and', 'or']
+    
+    for s in profile.search_terms:
+        show_search(t, s)
     t.tag_configure("sr", foreground="white", background="black")
+
 
 def get_book(sel):
     '''Open selected book.'''
