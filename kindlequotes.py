@@ -117,7 +117,7 @@ def do_search():
     if not hasattr(profile, 'database'):
         selectProfile()
     
-    s = database.Search(profile.database, profile.book_id, search_str)
+    s = database.Search(profile.database, profile.book_id, search_str, nocase=True)
     
     profile.search_terms = s.query_list
     
