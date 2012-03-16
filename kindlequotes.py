@@ -110,6 +110,7 @@ def run():
 
 
 def do_search():
+    quote_box.selection_clear(0,END)
     search_str = search_entry.get().lower()
     
     if not hasattr(profile, 'database'):
@@ -125,9 +126,11 @@ def do_search():
     updateQuoteList()
 
 
-def show_quote(sel):
+def show_quote(event):
     '''Open selected quote.'''
-    quote = quote_box.get(sel[0])[0][1]
+    #quote = quote_box.get(sel[0])[0][1]
+    element = quote_box.get(quote_box.curselection()[0])
+    quote = element[0][1]
 
     ind_quote_win = Toplevel(root)
     ind_quote_win.config(bg="#666")
@@ -193,6 +196,10 @@ def get_book(sel):
 def sort_column(e):
     '''Sort column in multilistbox widgets.'''
     msg_box.sort(column=e.column, mode=msg_box.sorting_order[e.column])
+    
+    #some debugging for sort events
+    for attr in dir(e):
+        print str(attr)+" => "+str(getattr(e, attr))
 
     if msg_box.sorting_order[e.column] == 'increasing':
         msg_box.column_configure(msg_box.column(e.column), arrow='up')
