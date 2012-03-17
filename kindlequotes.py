@@ -230,16 +230,6 @@ def sort_column(e, t=None):
         t.sorting_order[e.column] = 'increasing'
 
 
-def color_text(edit, tag, word, fg_color='black', bg_color='white'):
-    # add a space to the end of the word
-    word = word + " "
-    edit.insert('end', word)
-    end_index = edit.index('end')
-    begin_index = "%s-%sc" % (end_index, len(word) + 1)
-    edit.tag_add(tag, begin_index, end_index)
-    edit.tag_config(tag, foreground=fg_color, background=bg_color)
-
-
 def show_search(win, term):
     '''Showcase search terms'''
     win.mark_set("matchStart", win.index(1.0))
