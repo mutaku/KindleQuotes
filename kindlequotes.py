@@ -203,28 +203,31 @@ def get_book(sel):
     quote_box.config(selectcmd=show_quote, selectmode='extended', columns=('Location', 'Quote'), expandcolumns=[1], width=900, height=500)
     [[quote_box.column_configure(quote_box.column(x), arrow='down', arrowgravity='right')] for x in range(2)]
     quote_box.notify_install('<Header-invoke>')
-    quote_box.notify_bind('<Header-invoke>', lambda: sort_column(quote_box))
+    #quote_box.notify_bind('<Header-invoke>', lambda event: quote_box.sort(column=event.column, mode='increasing'))
+    quote_box.notify_bind('<Header-invoke>', lambda event,t=quote_box: sort_column(event, t))    
     quote_box.colors = ('white', '#ffdddd', 'white', '#ddeeff')
     [[quote_box.column_configure(quote_box.column(x), itembackground=quote_box.colors)] for x in range(2)]
+    
     quote_box.sorting_order = {0:'increasing', 1:'increasing'}
 
     retrieveData(t="quotes", book=profile.book_id)
 
 
-def sort_column(e):
+def sort_column(e, t=None):
     '''Sort column in multilistbox widgets.'''
-    msg_box.sort(column=e.column, mode=msg_box.sorting_order[e.column])
-    
     #some debugging for sort events
     #for attr in dir(e):
     #    print str(attr)+" => "+str(getattr(e, attr))
 
-    if msg_box.sorting_order[e.column] == 'increasing':
-        msg_box.column_configure(msg_box.column(e.column), arrow='up')
-        msg_box.sorting_order[e.column] = 'decreasing'
+    t.sort(column=e.column, mode=t.sorting_order[e.column])
+    #msg_box.sort(column=e.column, mode=msg_box.sorting_order[e.column], key=lambda x: x.lower())
+
+    if t.sorting_order[e.column] == 'increasing':
+        t.column_configure(t.column(e.column), arrow='up')
+        t.sorting_order[e.column] = 'decreasing'
     else:
-        msg_box.column_configure(msg_box.column(e.column), arrow='down')
-        msg_box.sorting_order[e.column] = 'increasing'
+        t.column_configure(t.column(e.column), arrow='down')
+        t.sorting_order[e.column] = 'increasing'
 
 
 def color_text(edit, tag, word, fg_color='black', bg_color='white'):
@@ -277,7 +280,7 @@ if __name__ == '__main__':
     menubar.add_cascade(label="Sync", menu=sync_menu)
 
     book_menu = Menu(menubar, tearoff=0, font=("Helvetica", 11,))
-    book_menu.add_command(label="Sort by Author[LAST]", command=lambda: msg_box.sort(column=0))
+    book_menu.add_command(label="Sort by Author", command=lambda: msg_box.sort(column=0))
     book_menu.add_command(label="Sort by Title", command=lambda: msg_box.sort(column=1))
     menubar.add_cascade(label="Books", menu=book_menu)
     
@@ -313,11 +316,11 @@ if __name__ == '__main__':
     scroll_msg.pack(side=RIGHT, fill=Y)
     msg_box.pack(fill=BOTH, expand=1)
 
-    msg_box.config(selectcmd=get_book, selectmode='extended', columns=('Author[Last,First]', 'Title', 'ID'), expandcolumns=[0,1], width=750)
+    msg_box.config(selectcmd=get_book, selectmode='extended', columns=('Author', 'Title', 'ID'), expandcolumns=[0,1], width=750)
     [[msg_box.column_configure(msg_box.column(x), arrow='down', arrowgravity='right')] for x in range(2)]
     msg_box.column_configure(msg_box.column(2), width=1)
     msg_box.notify_install('<Header-invoke>')
-    msg_box.notify_bind('<Header-invoke>', sort_column)
+    msg_box.notify_bind('<Header-invoke>', lambda event,t=msg_box: sort_column(event, t))
     msg_box.colors = ('white', '#ffdddd', 'white', '#ddeeff')
     [[msg_box.column_configure(msg_box.column(x), itembackground=msg_box.colors)] for x in range(2)]
     msg_box.sorting_order = {0:'increasing', 1:'increasing'}
