@@ -73,6 +73,9 @@ def retrieveData(t, book=None):
     elif t == "quotes":
         profile.quotes = d.quotes(book=book)
         updateQuoteList()
+        profile.search_terms = []
+        profile.search_tag = ""
+        search_box.delete(0, END)
 
 
 def updateBookList():
@@ -119,7 +122,7 @@ def run():
     retrieveData(t='books')
 
 
-def do_search():
+def do_search(event):
     quote_box.selection_clear(0,END)
     search_str = search_entry.get().lower()
     
@@ -127,9 +130,8 @@ def do_search():
         s = database.Search(profile.database, profile.book_id, search_str)
         
         profile.search_terms = s.query_list
+        profile.search_tag = "Showing search results for: "+', '.join(profile.search_terms)
         
-        #profile.books = s.books
-        #updateBookList()
         profile.quotes = s.clips
         updateQuoteList()
     else:
@@ -138,7 +140,6 @@ def do_search():
 
 def show_quote(event):
     '''Open selected quote.'''
-    #quote = quote_box.get(sel[0])[0][1]
     try:
         element = quote_box.get(quote_box.curselection()[0])
         quote = element[0][1]
@@ -147,16 +148,17 @@ def show_quote(event):
         ind_quote_win.config(bg="#666")
         
         t = Text(ind_quote_win, wrap=WORD, font=("Helvetica", 13,), padx=10, pady=10)
-        t.pack()
+
         t.insert(END, quote)
-        
-        # for testing:
-        #profile.search_terms = ['to', 'and', 'or']
         
         if profile.search_terms:
             for s in profile.search_terms:
                 show_search(t, s)
-            t.tag_configure("sr", foreground="white", background="black")
+            t.tag_configure("sr", foreground="white", background="black", font=("bold"))
+            Label(ind_quote_win, text=profile.search_tag, foreground="white", background="#666", font=("Helvetica", 13, "bold")).pack()
+
+        t.pack()
+
     except:
         pass
 
@@ -165,6 +167,7 @@ def get_book(sel):
     '''Open selected book.'''
     global quote_box
     global search_entry
+    global search_box
     
     profile.search_terms = []
     
@@ -186,7 +189,9 @@ def get_book(sel):
     
     search_entry = StringVar()
     search_box = Entry(qs, textvariable=search_entry, font=("Helvetica", 11, "bold"))
+    search_box.bind('<Return>', do_search)
     search_box.pack(side=LEFT, fill=BOTH, expand=1, ipadx=60)
+    Button(qs, command=lambda: retrieveData(t="quotes", book=profile.book_id), text="Reset").pack(side=RIGHT)
     Button(qs, command=do_search, text="Search Quotes").pack(side=RIGHT)
     
     scroll_quote = Scrollbar(qf, orient=VERTICAL)
@@ -246,6 +251,7 @@ def show_search(win, term):
         win.mark_set("matchStart", i)
         win.mark_set("matchEnd", "%s+%sc" % (i, count.get()))
         win.tag_add("sr", "matchStart", "matchEnd")
+
 
 
 if __name__ == '__main__':
