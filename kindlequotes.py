@@ -123,39 +123,42 @@ def do_search():
     quote_box.selection_clear(0,END)
     search_str = search_entry.get().lower()
     
-    if not hasattr(profile, 'database'):
-        selectProfile()
-    
-    s = database.Search(profile.database, profile.book_id, search_str)
-    
-    profile.search_terms = s.query_list
-    
-    #profile.books = s.books
-    #updateBookList()
-    profile.quotes = s.clips
-    updateQuoteList()
+    if len(search_str) > 2:
+        s = database.Search(profile.database, profile.book_id, search_str)
+        
+        profile.search_terms = s.query_list
+        
+        #profile.books = s.books
+        #updateBookList()
+        profile.quotes = s.clips
+        updateQuoteList()
+    else:
+        pass
 
 
 def show_quote(event):
     '''Open selected quote.'''
     #quote = quote_box.get(sel[0])[0][1]
-    element = quote_box.get(quote_box.curselection()[0])
-    quote = element[0][1]
-
-    ind_quote_win = Toplevel(root)
-    ind_quote_win.config(bg="#666")
+    try:
+        element = quote_box.get(quote_box.curselection()[0])
+        quote = element[0][1]
     
-    t = Text(ind_quote_win, wrap=WORD, font=("Helvetica", 13,), padx=10, pady=10)
-    t.pack()
-    t.insert(END, quote)
-    
-    # for testing:
-    #profile.search_terms = ['to', 'and', 'or']
-    
-    if profile.search_terms:
-        for s in profile.search_terms:
-            show_search(t, s)
-        t.tag_configure("sr", foreground="white", background="black")
+        ind_quote_win = Toplevel(root)
+        ind_quote_win.config(bg="#666")
+        
+        t = Text(ind_quote_win, wrap=WORD, font=("Helvetica", 13,), padx=10, pady=10)
+        t.pack()
+        t.insert(END, quote)
+        
+        # for testing:
+        #profile.search_terms = ['to', 'and', 'or']
+        
+        if profile.search_terms:
+            for s in profile.search_terms:
+                show_search(t, s)
+            t.tag_configure("sr", foreground="white", background="black")
+    except:
+        pass
 
 
 def get_book(sel):
@@ -272,7 +275,7 @@ if __name__ == '__main__':
     book_menu.add_command(label="Sort by Title", command=lambda: msg_box.sort(column=1))
     menubar.add_cascade(label="Books", menu=book_menu)
     
-    root.config(bg="#0B3861", menu=menubar, relief=SUNKEN)
+    root.config(bg="#0B3861", menu=menubar)
     
     frame1 = Frame(root)
     frame1.config(bg="#0B3861", padx=10, pady=10)
