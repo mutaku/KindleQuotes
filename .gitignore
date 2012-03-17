@@ -1,8 +1,7 @@
-My\ Clippings.txt
+*Clippings.txt
 *.swp
 *.pyc
 *~
 local_settings.py
-
 *.s3db
 *.*-journal
