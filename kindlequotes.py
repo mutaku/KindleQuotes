@@ -9,6 +9,7 @@ import sys
 import TkTreectrl as treectrl
 import clippingparser
 import database
+import fb
 
 
 path = os.path.dirname(sys.argv[0])
@@ -138,18 +139,41 @@ def do_search(event):
         pass
 
 
+def post_quote():
+    '''Post this quote to Facebook with optional note.'''
+    try:
+        note = quote_post_entry.get()
+        
+        #quote_post_box.delete(0, END)
+        #quote_post_box.insert(0, "[trying to post to Facebook] ")
+  
+        #f = fb.FacebookIt(app_id='134978336629865')
+        f = fb.FacebookIt()
+        post_string = '\n\n'.join([profile.current_quote.rstrip('\n'), "--"+profile.book_title, note, "Posted from KindleQuotes (https://github.com/mutaku/KindleQuotes/wiki)"])
+        r = f.post(post_string)
+        
+        #quote_post_box.delete(0, END)
+        quote_post_box.insert(0, "Posted successfully. ")
+    except:
+        quote_post_box.delete(0, END)
+        quote_post_box.insert(0, "Error posting to Facebook.")
+
+
 def show_quote(event):
     '''Open selected quote.'''
+    global quote_post_entry
+    global quote_post_box
+    
     try:
         element = quote_box.get(quote_box.curselection()[0])
-        quote = element[0][1]
+        profile.current_quote = element[0][1]
     
         ind_quote_win = Toplevel(root)
         ind_quote_win.config(bg="#666")
         
         t = Text(ind_quote_win, wrap=WORD, font=("Helvetica", 13,), padx=10, pady=10)
 
-        t.insert(END, quote)
+        t.insert(END, profile.current_quote)
         
         if profile.search_terms:
             for s in profile.search_terms:
@@ -158,6 +182,16 @@ def show_quote(event):
             Label(ind_quote_win, text=profile.search_tag, foreground="white", background="#666", font=("Helvetica", 13, "bold")).pack()
 
         t.pack()
+
+        qp = Frame(ind_quote_win)
+        qp.pack(side=BOTTOM, fill=X, expand=1, pady=5)        
+        
+        quote_post_entry = StringVar()
+        quote_post_box = Entry(qp, text=quote_post_entry, font=("Helvetica", 11, "bold"))
+        quote_post_box.bind('<Return>', post_quote)
+        quote_post_box.pack(side=LEFT, fill=BOTH, expand=1, ipadx=60)
+        
+        Button(qp, command=post_quote, text="Post to Facebook").pack(side=RIGHT)
 
     except:
         pass
