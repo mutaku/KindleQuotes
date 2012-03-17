@@ -5,6 +5,7 @@ https://github.com/mutaku/KindleQuotes/wiki
 
 This new version is actively being developed and, therefore, the code here will be in various stages of functionality.
 
+** Now supports sharing on Facebook!
 
 KindleQuotes takes your clippings file, called "My Clippings.txt", from your Kindle, parses this data into an SQlite database file, 
 and then provides a way to view, search and share all of your highlighted passages and notes.
@@ -27,6 +28,7 @@ Required Software (should later come packaged):
 - pysqlite2 and sqlite3
 - python (w/tk)
 - tktreectrl*
+- fbconsole
 
 *tktreectrl can be tricky to setup depending on the platform. 
 Instructions to come, but you can get started by following the 
