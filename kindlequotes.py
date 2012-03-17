@@ -4,9 +4,14 @@
 
 from Tkinter import *
 import tkFileDialog
+import os
+import sys
 import TkTreectrl as treectrl
 import clippingparser
 import database
+
+
+path = os.path.dirname(sys.argv[0])
 
 
 class Profile():
@@ -19,13 +24,15 @@ def getFile(title, t):
     '''Ask for respective file.'''
     options = {
         'parent' : root,
-        'title' : title
+        'title' : title,
+        'initialdir' : path,
     }
     
     ftypes = {
         'high' : ['Kindle Highlights','.txt'],
         'db' : ['Sqlite3 DB','.s3db']
     }
+    print path
     
     options['filetypes'] = [(ftypes[t][0],ftypes[t][1])]
     
@@ -37,6 +44,7 @@ def setupProfile():
     # instead of a save-as, could just prompt for a name in a tkinter entry then store in ~/.KindleQuotes
     options = {
         'parent' : root,
+        'initialdir' : path,
         'title' : 'Choose a Profile Name to save as: ',
         'filetypes' : [('Sqlite3 DB','.s3db')]
     }
