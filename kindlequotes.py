@@ -32,7 +32,6 @@ def getFile(title, t):
         'high' : ['Kindle Highlights','.txt'],
         'db' : ['Sqlite3 DB','.s3db']
     }
-    print path
     
     options['filetypes'] = [(ftypes[t][0],ftypes[t][1])]
     
@@ -50,17 +49,19 @@ def setupProfile():
     }
     
     name = tkFileDialog.asksaveasfilename(**options)
+    
     if not name.endswith('.s3db'):
         name = ''.join([name,'.s3db'])
-    
+
     f = open(name, 'w')
     f.close()
     
     database.setup(name)
     
     profile.database = name
-    profile_label['text'] = profile.database
 
+    profile.name = os.path.basename(profile.database).rstrip('.s3db')
+    profile_label['text'] = ''.join([profile.name.capitalize(), "'s Kindle Quotes, Highlights, and Bookmarks"])
 
 def retrieveData(t, book=None):
     '''Get Data for profile from database.'''
@@ -72,6 +73,7 @@ def retrieveData(t, book=None):
     elif t == "quotes":
         profile.quotes = d.quotes(book=book)
         updateQuoteList()
+
 
 def updateBookList():
     '''Update the books listed in main display.'''
@@ -98,7 +100,8 @@ def updateQuoteList():
 def selectProfile():
     '''Get profile.'''
     profile.database = getFile("Select profile: ", 'db')
-    profile_label['text'] = profile.database
+    profile.name = os.path.basename(profile.database).rstrip('.s3db')
+    profile_label['text'] = ''.join([profile.name.capitalize(), "'s Kindle Quotes, Highlights, and Bookmarks"])
     
     retrieveData(t="books")
 
@@ -111,7 +114,6 @@ def run():
         selectProfile()
     
     p = clippingparser.Parse(profile.highlights, profile.database)
-    print p.clean_clips
     
     p.database_dump()
     retrieveData(t='books')
@@ -143,8 +145,8 @@ def show_quote(event):
     ind_quote_win = Toplevel(root)
     ind_quote_win.config(bg="#666")
     
-    t = Text(ind_quote_win, wrap=WORD)
-    t.grid()
+    t = Text(ind_quote_win, wrap=WORD, font=("Helvetica", 13,), padx=10, pady=10)
+    t.pack()
     t.insert(END, quote)
     
     # for testing:
@@ -169,28 +171,28 @@ def get_book(sel):
     
     quote_win = Toplevel(root)
     quote_win.title(profile.book_title)
-    quote_win.config(bg="#666")
+    quote_win.config(bg="#0B3861")
 
     qs = Frame(quote_win)
-    qs.config(pady=2, bg="#666")
-    qs.grid()
+    qs.config(pady=2, bg="#0B3861")
+    qs.pack(side=TOP, fill=BOTH, expand=0)
 
     qf = Frame(quote_win)
-    qf.config(height=30, pady=10)
-    qf.grid()
+    qf.config(pady=10)
+    qf.pack(side=BOTTOM, fill=BOTH, expand=1)
     
     search_entry = StringVar()
-    search_box = Entry(qs, textvariable=search_entry)
-    search_box.grid(row=0, column=0, columnspan=4, sticky=W)
-    Button(qs, command=do_search, text="Search Quotes").grid(row=0, column=4, sticky=E)
+    search_box = Entry(qs, textvariable=search_entry, font=("Helvetica", 11, "bold"))
+    search_box.pack(side=LEFT, fill=BOTH, expand=1, ipadx=60)
+    Button(qs, command=do_search, text="Search Quotes").pack(side=RIGHT)
     
     scroll_quote = Scrollbar(qf, orient=VERTICAL)
-    quote_box = treectrl.MultiListbox(qf, yscrollcommand=scroll_quote.set)
+    quote_box = treectrl.MultiListbox(qf, yscrollcommand=scroll_quote.set, font=("Helvetica", 11,))
     scroll_quote.config(command=quote_box.yview, highlightbackground="#fff")
-    scroll_quote.grid(row=0, column=1, sticky=N+S)
-    quote_box.grid(row=0, column=0, sticky=E+W)
+    scroll_quote.pack(side=RIGHT, fill=Y)
+    quote_box.pack(fill=BOTH, expand=1)
 
-    quote_box.config(selectcmd=show_quote, selectmode='extended', columns=('Location', 'Quote'), expandcolumns=[1], width=750)
+    quote_box.config(selectcmd=show_quote, selectmode='extended', columns=('Location', 'Quote'), expandcolumns=[1], width=900, height=500)
     [[quote_box.column_configure(quote_box.column(x), arrow='down', arrowgravity='right')] for x in range(2)]
     quote_box.notify_install('<Header-invoke>')
     quote_box.notify_bind('<Header-invoke>', lambda: sort_column(quote_box))
@@ -206,8 +208,8 @@ def sort_column(e):
     msg_box.sort(column=e.column, mode=msg_box.sorting_order[e.column])
     
     #some debugging for sort events
-    for attr in dir(e):
-        print str(attr)+" => "+str(getattr(e, attr))
+    #for attr in dir(e):
+    #    print str(attr)+" => "+str(getattr(e, attr))
 
     if msg_box.sorting_order[e.column] == 'increasing':
         msg_box.column_configure(msg_box.column(e.column), arrow='up')
@@ -250,45 +252,57 @@ if __name__ == '__main__':
     root = Tk()
     root.title('KindleQuotes')
     
-    menubar = Menu(root)
+    menubar = Menu(root, font=("Helvetica", 11,))
     
-    main_menu = Menu(menubar, tearoff=0)
+    main_menu = Menu(menubar, tearoff=0, font=("Helvetica", 11,))
     main_menu.add_command(label="Exit", command=root.destroy)
     menubar.add_cascade(label="KindleQuotes", menu=main_menu)
     
-    pro_menu = Menu(menubar, tearoff=0)
+    pro_menu = Menu(menubar, tearoff=0, font=("Helvetica", 11,))
     pro_menu.add_command(label="Open/Switch Profile", command=selectProfile)
     pro_menu.add_command(label="New Profile", command=setupProfile)
     menubar.add_cascade(label="Profile", menu=pro_menu)
 
-    sync_menu = Menu(menubar, tearoff=0)
+    sync_menu = Menu(menubar, tearoff=0, font=("Helvetica", 11,))
     sync_menu.add_command(label="Sync Database", command=run)
     menubar.add_cascade(label="Sync", menu=sync_menu)
 
-    book_menu = Menu(menubar, tearoff=0)
+    book_menu = Menu(menubar, tearoff=0, font=("Helvetica", 11,))
     book_menu.add_command(label="Sort by Author[LAST]", command=lambda: msg_box.sort(column=0))
     book_menu.add_command(label="Sort by Title", command=lambda: msg_box.sort(column=1))
     menubar.add_cascade(label="Books", menu=book_menu)
     
-    root.config(bg="#666", menu=menubar)
+    root.config(bg="#0B3861", menu=menubar, relief=SUNKEN)
     
     frame1 = Frame(root)
-    frame1.config(bg="#666", padx=5, pady=10)
-    frame1.grid(row=0)
-    
+    frame1.config(bg="#0B3861", padx=10, pady=10)
+    frame1.pack(side=TOP, fill=BOTH)
+
     frame2 = Frame(root)
-    frame2.config(bg="#666", padx=5, pady=10)
-    frame2.grid(row=1)
+    frame2.config(bg="#0B3861", padx=10, pady=10)
+    frame2.pack(side=RIGHT, fill=BOTH)
     
-    Label(frame1, text="Active Profile:", bg="#666", fg="#808080").grid(row=0, column=0, sticky=W)
-    profile_label = Label(frame1, text="Create or Select a profile.", bg="#666", fg="#ccc")
-    profile_label.grid(row=0, column=1, columnspan=4, sticky=E)
+    frame3 = Frame(frame1)
+    frame3.config(bg="#0B3861", padx=5, pady=10)
+    frame3.pack(side=LEFT, fill=BOTH)
+
+    frame4 = Frame(frame1)
+    frame4.config(bg="#0B3861", padx=5, pady=10)
+    frame4.pack(fill=BOTH)
+    
+    photo = PhotoImage(file=path+"/kindle_sm.gif")
+    pLabel = Label(frame3, image=photo, relief=SUNKEN, borderwidth=3)
+    pLabel.image = photo
+    pLabel.pack(side=LEFT, expand=1)
+    
+    profile_label = Label(frame4, text="Welcome to KindleQuotes!\n Create or Select a profile.", bg="#0B3861", fg="#fff", font=("Helvetica", 18), wraplength=600)
+    profile_label.pack(fill=X, expand=1, ipady=10)
     
     scroll_msg = Scrollbar(frame2, orient=VERTICAL)
-    msg_box = treectrl.MultiListbox(frame2, yscrollcommand=scroll_msg.set)
+    msg_box = treectrl.MultiListbox(frame2, yscrollcommand=scroll_msg.set, font=("Helvetica", 11,))
     scroll_msg.config(command=msg_box.yview, highlightbackground="#fff")
-    scroll_msg.grid(row=1, column=1, sticky=N+S)
-    msg_box.grid(row=1, column=0, sticky=E+W)
+    scroll_msg.pack(side=RIGHT, fill=Y)
+    msg_box.pack(fill=BOTH, expand=1)
 
     msg_box.config(selectcmd=get_book, selectmode='extended', columns=('Author[Last,First]', 'Title', 'ID'), expandcolumns=[0,1], width=750)
     [[msg_box.column_configure(msg_box.column(x), arrow='down', arrowgravity='right')] for x in range(2)]
