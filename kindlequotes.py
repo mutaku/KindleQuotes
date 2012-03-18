@@ -64,6 +64,7 @@ def setupProfile():
     profile.name = os.path.basename(profile.database).rstrip('.s3db')
     profile_label['text'] = ''.join([profile.name.capitalize(), "'s Kindle Quotes, Highlights, and Bookmarks"])
 
+
 def retrieveData(t, book=None):
     '''Get Data for profile from database.'''
     d = database.Retrieve(profile.database)
@@ -79,28 +80,6 @@ def retrieveData(t, book=None):
         search_box.delete(0, END)
 
 
-def updateBookList():
-    '''Update the books listed in main display.'''
-    msg_box.delete(0, END)
-
-    for b in profile.books:
-        entry = (b[2], b[1], b[0])
-        msg_box.insert(END, *entry)
-    
-    msg_box.sort(0)
-
-
-def updateQuoteList():
-    '''Update the quotes listed in toplevel display.'''
-    quote_box.delete(0, END)
-
-    for q in profile.quotes:
-        entry = (q[2], q[5])
-        quote_box.insert(END, *entry)
-    
-    quote_box.sort(0, mode="increasing")
-
-
 def selectProfile():
     '''Get profile.'''
     profile.database = getFile("Select profile: ", 'db')
@@ -110,7 +89,7 @@ def selectProfile():
     retrieveData(t="books")
 
 
-def run():
+def sync_db():
     '''Get clippings file and database, run parser, and dump into database.'''
     profile.highlights = getFile("Select Kindle Highlights file: ", 'high')
 
@@ -139,13 +118,65 @@ def do_search(event):
         pass
 
 
+def show_search(win, term):
+    '''Showcase search terms'''
+    win.mark_set("matchStart", win.index(1.0))
+    win.mark_set("matchEnd", win.index(1.0))
+    win.mark_set("searchLimit", win.index(END))
+    
+    count = IntVar()
+    while True:
+        i = win.search(term, "matchEnd", "searchLimit", count=count, nocase=True)
+        if not i:
+            break
+        win.mark_set("matchStart", i)
+        win.mark_set("matchEnd", "%s+%sc" % (i, count.get()))
+        win.tag_add("sr", "matchStart", "matchEnd")
+
+
+def sort_column(e, t=None):
+    '''Sort column in multilistbox widgets.'''
+    #some debugging for sort events
+    #for attr in dir(e):
+    #    print str(attr)+" => "+str(getattr(e, attr))
+
+    t.sort(column=e.column, mode=t.sorting_order[e.column])
+    #msg_box.sort(column=e.column, mode=msg_box.sorting_order[e.column], key=lambda x: x.lower())
+
+    if t.sorting_order[e.column] == 'increasing':
+        t.column_configure(t.column(e.column), arrow='up')
+        t.sorting_order[e.column] = 'decreasing'
+    else:
+        t.column_configure(t.column(e.column), arrow='down')
+        t.sorting_order[e.column] = 'increasing'
+
+
+def updateBookList():
+    '''Update the books listed in main display.'''
+    msg_box.delete(0, END)
+
+    for b in profile.books:
+        entry = (b[2], b[1], b[0])
+        msg_box.insert(END, *entry)
+    
+    msg_box.sort(0)
+
+
+def updateQuoteList():
+    '''Update the quotes listed in toplevel display.'''
+    quote_box.delete(0, END)
+
+    for q in profile.quotes:
+        entry = (q[2], q[5])
+        quote_box.insert(END, *entry)
+    
+    quote_box.sort(0, mode="increasing")
+
+
 def post_quote():
     '''Post this quote to Facebook with optional note.'''
     try:
         note = quote_post_entry.get()
-        
-        #quote_post_box.delete(0, END)
-        #quote_post_box.insert(0, "[trying to post to Facebook] ")
   
         #f = fb.FacebookIt(app_id='134978336629865')
         f = fb.FacebookIt()
@@ -249,40 +280,6 @@ def get_book(sel):
     retrieveData(t="quotes", book=profile.book_id)
 
 
-def sort_column(e, t=None):
-    '''Sort column in multilistbox widgets.'''
-    #some debugging for sort events
-    #for attr in dir(e):
-    #    print str(attr)+" => "+str(getattr(e, attr))
-
-    t.sort(column=e.column, mode=t.sorting_order[e.column])
-    #msg_box.sort(column=e.column, mode=msg_box.sorting_order[e.column], key=lambda x: x.lower())
-
-    if t.sorting_order[e.column] == 'increasing':
-        t.column_configure(t.column(e.column), arrow='up')
-        t.sorting_order[e.column] = 'decreasing'
-    else:
-        t.column_configure(t.column(e.column), arrow='down')
-        t.sorting_order[e.column] = 'increasing'
-
-
-def show_search(win, term):
-    '''Showcase search terms'''
-    win.mark_set("matchStart", win.index(1.0))
-    win.mark_set("matchEnd", win.index(1.0))
-    win.mark_set("searchLimit", win.index(END))
-    
-    count = IntVar()
-    while True:
-        i = win.search(term, "matchEnd", "searchLimit", count=count, nocase=True)
-        if not i:
-            break
-        win.mark_set("matchStart", i)
-        win.mark_set("matchEnd", "%s+%sc" % (i, count.get()))
-        win.tag_add("sr", "matchStart", "matchEnd")
-
-
-
 if __name__ == '__main__':
 
     profile = Profile()
@@ -302,7 +299,7 @@ if __name__ == '__main__':
     menubar.add_cascade(label="Profile", menu=pro_menu)
 
     sync_menu = Menu(menubar, tearoff=0, font=("Helvetica", 11,))
-    sync_menu.add_command(label="Sync Database", command=run)
+    sync_menu.add_command(label="Sync Database", command=sync_db)
     menubar.add_cascade(label="Sync", menu=sync_menu)
 
     book_menu = Menu(menubar, tearoff=0, font=("Helvetica", 11,))
