@@ -1,0 +1,8 @@
+*Clippings.txt
+*.swp
+*.pyc
+*~
+local_settings.py
+*.s3db
+*.*-journal
+.fb*

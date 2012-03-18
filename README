@@ -1,0 +1,39 @@
+Current version of KindleQuotes is currently in the works...
+
+https://github.com/mutaku/KindleQuotes/wiki
+
+
+This new version is actively being developed and, therefore, the code here will be in various stages of functionality.
+
+** Now supports sharing on Facebook!
+
+KindleQuotes takes your clippings file, called "My Clippings.txt", from your Kindle, parses this data into an SQlite database file, 
+and then provides a way to view, search and share all of your highlighted passages and notes.
+
+The initial version (commented on below) would parse a provided clippings file and generate HTML that could be stylized and included
+in a wrapper page, or dumped in MySQL. The new version aims to provide better cross-platform support and portability. Currently, this 
+involves utilizing file-based database system, SQlite, and a Tkinter GUI. The only modules needed that aren't naturally available in 
+the average Python install is PySQlite2, but will most likely be bundled in when with KindleQuotes when completed.
+
+
+To access your clippings file, mount your Kindle device and navigate to Documents within the root. It will be found in that directory
+along with your books. It will be called "My Clippings.txt" and you may load this directly into KindleQuotes, or better, copy to your
+machine first.
+
+
+More details will be provided soon.
+
+
+Required Software (should later come packaged):
+- pysqlite2 and sqlite3
+- python (w/tk)
+- tktreectrl*
+- fbconsole
+
+*tktreectrl can be tricky to setup depending on the platform. 
+Instructions to come, but you can get started by following the 
+instructions on the tktreectrl site 
+(http://klappnase.bubble.org/TkinterTreectrl/). You'll need to grab the 
+zip 
+file provided for the python module and the archive through sourceforge 
+for the tcl/tk bindings.
