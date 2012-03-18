@@ -5,3 +5,4 @@
 local_settings.py
 *.s3db
 *.*-journal
+.fb_access_token

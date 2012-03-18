@@ -64,6 +64,7 @@ def setupProfile():
     profile.name = os.path.basename(profile.database).rstrip('.s3db')
     profile_label['text'] = ''.join([profile.name.capitalize(), "'s Kindle Quotes, Highlights, and Bookmarks"])
 
+
 def retrieveData(t, book=None):
     '''Get Data for profile from database.'''
     d = database.Retrieve(profile.database)
@@ -79,28 +80,6 @@ def retrieveData(t, book=None):
         search_box.delete(0, END)
 
 
-def updateBookList():
-    '''Update the books listed in main display.'''
-    msg_box.delete(0, END)
-
-    for b in profile.books:
-        entry = (b[2], b[1], b[0])
-        msg_box.insert(END, *entry)
-    
-    msg_box.sort(0)
-
-
-def updateQuoteList():
-    '''Update the quotes listed in toplevel display.'''
-    quote_box.delete(0, END)
-
-    for q in profile.quotes:
-        entry = (q[2], q[5])
-        quote_box.insert(END, *entry)
-    
-    quote_box.sort(0, mode="increasing")
-
-
 def selectProfile():
     '''Get profile.'''
     profile.database = getFile("Select profile: ", 'db')
@@ -110,7 +89,7 @@ def selectProfile():
     retrieveData(t="books")
 
 
-def run():
+def sync_db():
     '''Get clippings file and database, run parser, and dump into database.'''
     profile.highlights = getFile("Select Kindle Highlights file: ", 'high')
 
@@ -139,6 +118,61 @@ def do_search(event):
         pass
 
 
+def show_search(win, term):
+    '''Showcase search terms'''
+    win.mark_set("matchStart", win.index(1.0))
+    win.mark_set("matchEnd", win.index(1.0))
+    win.mark_set("searchLimit", win.index(END))
+    
+    count = IntVar()
+    while True:
+        i = win.search(term, "matchEnd", "searchLimit", count=count, nocase=True)
+        if not i:
+            break
+        win.mark_set("matchStart", i)
+        win.mark_set("matchEnd", "%s+%sc" % (i, count.get()))
+        win.tag_add("sr", "matchStart", "matchEnd")
+
+
+def sort_column(e, t=None):
+    '''Sort column in multilistbox widgets.'''
+    #some debugging for sort events
+    #for attr in dir(e):
+    #    print str(attr)+" => "+str(getattr(e, attr))
+
+    t.sort(column=e.column, mode=t.sorting_order[e.column])
+    #msg_box.sort(column=e.column, mode=msg_box.sorting_order[e.column], key=lambda x: x.lower())
+
+    if t.sorting_order[e.column] == 'increasing':
+        t.column_configure(t.column(e.column), arrow='up')
+        t.sorting_order[e.column] = 'decreasing'
+    else:
+        t.column_configure(t.column(e.column), arrow='down')
+        t.sorting_order[e.column] = 'increasing'
+
+
+def updateBookList():
+    '''Update the books listed in main display.'''
+    msg_box.delete(0, END)
+
+    for b in profile.books:
+        entry = (b[2], b[1], b[0])
+        msg_box.insert(END, *entry)
+    
+    msg_box.sort(0)
+
+
+def updateQuoteList():
+    '''Update the quotes listed in toplevel display.'''
+    quote_box.delete(0, END)
+
+    for q in profile.quotes:
+        entry = (q[2], q[5])
+        quote_box.insert(END, *entry)
+    
+    quote_box.sort(0, mode="increasing")
+
+
 def post_quote():
     '''Post this quote to Facebook with optional note.'''
     try:
@@ -146,17 +180,17 @@ def post_quote():
         
         #quote_post_box.delete(0, END)
         #quote_post_box.insert(0, "[trying to post to Facebook] ")
-  
+
         #f = fb.FacebookIt(app_id='134978336629865')
         f = fb.FacebookIt()
         post_string = '\n\n'.join([profile.current_quote.rstrip('\n'), "--"+profile.book_title, note, "Posted from KindleQuotes (https://github.com/mutaku/KindleQuotes/wiki)"])
-        r = f.post(post_string)
-        
+ 
         #quote_post_box.delete(0, END)
         quote_post_box.insert(0, "Posted successfully. ")
-    except:
+
+    except Exception as inst:
         quote_post_box.delete(0, END)
-        quote_post_box.insert(0, "Error posting to Facebook.")
+        quote_post_box.insert(0, " - ".join(["Error posting to Facebook", inst.__str__()]))
 
 
 def show_quote(event):
@@ -184,6 +218,8 @@ def show_quote(event):
         t.pack()
 
         qp = Frame(ind_quote_win)
+
+        qp.config(bg="#666")
         qp.pack(side=BOTTOM, fill=X, expand=1, pady=5)        
         
         quote_post_entry = StringVar()
@@ -211,10 +247,10 @@ def get_book(sel):
     
     quote_win = Toplevel(root)
     quote_win.title(profile.book_title)
-    quote_win.config(bg="#0B3861")
+    quote_win.config(bg="#333333")
 
     qs = Frame(quote_win)
-    qs.config(pady=2, bg="#0B3861")
+    qs.config(pady=2, bg="#333333")
     qs.pack(side=TOP, fill=BOTH, expand=0)
 
     qf = Frame(quote_win)
@@ -247,40 +283,6 @@ def get_book(sel):
     retrieveData(t="quotes", book=profile.book_id)
 
 
-def sort_column(e, t=None):
-    '''Sort column in multilistbox widgets.'''
-    #some debugging for sort events
-    #for attr in dir(e):
-    #    print str(attr)+" => "+str(getattr(e, attr))
-
-    t.sort(column=e.column, mode=t.sorting_order[e.column])
-    #msg_box.sort(column=e.column, mode=msg_box.sorting_order[e.column], key=lambda x: x.lower())
-
-    if t.sorting_order[e.column] == 'increasing':
-        t.column_configure(t.column(e.column), arrow='up')
-        t.sorting_order[e.column] = 'decreasing'
-    else:
-        t.column_configure(t.column(e.column), arrow='down')
-        t.sorting_order[e.column] = 'increasing'
-
-
-def show_search(win, term):
-    '''Showcase search terms'''
-    win.mark_set("matchStart", win.index(1.0))
-    win.mark_set("matchEnd", win.index(1.0))
-    win.mark_set("searchLimit", win.index(END))
-    
-    count = IntVar()
-    while True:
-        i = win.search(term, "matchEnd", "searchLimit", count=count, nocase=True)
-        if not i:
-            break
-        win.mark_set("matchStart", i)
-        win.mark_set("matchEnd", "%s+%sc" % (i, count.get()))
-        win.tag_add("sr", "matchStart", "matchEnd")
-
-
-
 if __name__ == '__main__':
 
     profile = Profile()
@@ -300,7 +302,7 @@ if __name__ == '__main__':
     menubar.add_cascade(label="Profile", menu=pro_menu)
 
     sync_menu = Menu(menubar, tearoff=0, font=("Helvetica", 11,))
-    sync_menu.add_command(label="Sync Database", command=run)
+    sync_menu.add_command(label="Sync Database", command=sync_db)
     menubar.add_cascade(label="Sync", menu=sync_menu)
 
     book_menu = Menu(menubar, tearoff=0, font=("Helvetica", 11,))
@@ -308,22 +310,22 @@ if __name__ == '__main__':
     book_menu.add_command(label="Sort by Title", command=lambda: msg_box.sort(column=1))
     menubar.add_cascade(label="Books", menu=book_menu)
     
-    root.config(bg="#0B3861", menu=menubar)
+    root.config(bg="#333333", menu=menubar)
     
     frame1 = Frame(root)
-    frame1.config(bg="#0B3861", padx=10, pady=10)
+    frame1.config(bg="#333333", padx=10, pady=10)
     frame1.pack(side=TOP, fill=BOTH)
 
     frame2 = Frame(root)
-    frame2.config(bg="#0B3861", padx=10, pady=10)
+    frame2.config(bg="#333333", padx=10, pady=10)
     frame2.pack(side=RIGHT, fill=BOTH)
     
     frame3 = Frame(frame1)
-    frame3.config(bg="#0B3861", padx=5, pady=10)
+    frame3.config(bg="#333333", padx=5, pady=10)
     frame3.pack(side=LEFT, fill=BOTH)
 
     frame4 = Frame(frame1)
-    frame4.config(bg="#0B3861", padx=5, pady=10)
+    frame4.config(bg="#333333", padx=5, pady=10)
     frame4.pack(fill=BOTH)
     
     photo = PhotoImage(file=path+"/kindle_sm.gif")
@@ -331,7 +333,7 @@ if __name__ == '__main__':
     pLabel.image = photo
     pLabel.pack(side=LEFT, expand=1)
     
-    profile_label = Label(frame4, text="Welcome to KindleQuotes!\n Create or Select a profile.", bg="#0B3861", fg="#fff", font=("Helvetica", 18), wraplength=600)
+    profile_label = Label(frame4, text="Welcome to KindleQuotes!\n Create or Select a profile.", bg="#333333", fg="#fff", font=("Helvetica", 18), wraplength=600)
     profile_label.pack(fill=X, expand=1, ipady=10)
     
     scroll_msg = Scrollbar(frame2, orient=VERTICAL)

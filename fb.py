@@ -9,8 +9,10 @@ class FacebookIt():
     def __init__(self, app_id=None):
         if app_id:
             fbconsole.APP_ID = '<'+app_id+'>'
-        fbconsole.authenticate()
-        
+
+	fbconsole.AUTH_SCOPE = ['publish_stream', 'publish_checkins']
+	fbconsole.authenticate()
+
     def post(self, data):
         result = fbconsole.post('/me/feed', {'message':data})
         
