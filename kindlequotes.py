@@ -184,6 +184,7 @@ def post_quote():
         #f = fb.FacebookIt(app_id='134978336629865')
         f = fb.FacebookIt()
         post_string = '\n\n'.join([profile.current_quote.rstrip('\n'), "--"+profile.book_title, note, "Posted from KindleQuotes (https://github.com/mutaku/KindleQuotes/wiki)"])
+        f.post(post_string)
  
         #quote_post_box.delete(0, END)
         quote_post_box.insert(0, "Posted successfully. ")
