@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Kindlequotes by mutaku</title>
+    
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Kindlequotes</h1>
+        <p>Store, View, Search, and Share Kindle Bookmarks, Quotes, and Highlights with Python and Tkinter</p>
+        <p class="view"><a href="https://github.com/mutaku/KindleQuotes">View the Project on GitHub <small>mutaku/KindleQuotes</small></a></p>
+        <ul>
+          <li><a href="https://github.com/mutaku/KindleQuotes/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/mutaku/KindleQuotes/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/mutaku/KindleQuotes">Fork On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p>Current version of KindleQuotes is currently in the works...</p>
+
+<p><a href="https://github.com/mutaku/KindleQuotes/wiki">https://github.com/mutaku/KindleQuotes/wiki</a></p>
+
+<p>This new version is actively being developed and, therefore, the code here will be in various stages of functionality.</p>
+
+<p>** Now supports sharing on Facebook!</p>
+
+<p>KindleQuotes takes your clippings file, called "My Clippings.txt", from your Kindle, parses this data into an SQlite database file, 
+and then provides a way to view, search and share all of your highlighted passages and notes.</p>
+
+<p>The initial version (commented on below) would parse a provided clippings file and generate HTML that could be stylized and included
+in a wrapper page, or dumped in MySQL. The new version aims to provide better cross-platform support and portability. Currently, this 
+involves utilizing file-based database system, SQlite, and a Tkinter GUI. The only modules needed that aren't naturally available in 
+the average Python install is PySQlite2, but will most likely be bundled in when with KindleQuotes when completed.</p>
+
+<p>To access your clippings file, mount your Kindle device and navigate to Documents within the root. It will be found in that directory
+along with your books. It will be called "My Clippings.txt" and you may load this directly into KindleQuotes, or better, copy to your
+machine first.</p>
+
+<p>More details will be provided soon.</p>
+
+<p>Required Software (should later come packaged):
+- pysqlite2 and sqlite3
+- python (w/tk)
+- tktreectrl*
+- fbconsole</p>
+
+<p>*tktreectrl can be tricky to setup depending on the platform. 
+Instructions to come, but you can get started by following the 
+instructions on the tktreectrl site 
+(<a href="http://klappnase.bubble.org/TkinterTreectrl/">http://klappnase.bubble.org/TkinterTreectrl/</a>). You'll need to grab the 
+zip 
+file provided for the python module and the archive through sourceforge 
+for the tcl/tk bindings.</p>
+
+<p>For now, a few beta(!) screens.</p>
+
+<p><img src="http://pathofthesamurai.com/kq_c1.png" alt="main"></p>
+
+<hr><p><img src="http://pathofthesamurai.com/kq_c2.png" alt="user's books"></p>
+
+<hr><p><img src="http://pathofthesamurai.com/kq_c3.png" alt="quotes for book"></p>
+
+<hr><p><img src="http://pathofthesamurai.com/kq_c4.png" alt="view quote"></p>
+
+<hr><p><img src="http://pathofthesamurai.com/kq_c5.png" alt="post to facebook with comment"></p>
+
+<hr><p><img src="http://pathofthesamurai.com/kq_c7.png" alt="posted on facebook"></p>
+
+<hr><p><img src="http://pathofthesamurai.com/kq_c6.png" alt="search"></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/mutaku">mutaku</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+  </body>
+</html>
